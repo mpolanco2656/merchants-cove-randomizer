@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  merchants-cove-randomizer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: merchants-cove-randomizer
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - merchants-network
+
+networks:
+  merchants-network:
+    driver: bridge

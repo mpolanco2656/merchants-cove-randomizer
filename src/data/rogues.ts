@@ -1,0 +1,290 @@
+import { Rogue } from '../types';
+
+export const rogues: Rogue[] = [
+  {
+    id: 1,
+    name: 'Criminals',
+    expansion: 'Core',
+    description: 'Prácticamente inofensivos. Perfectos para nuevos jugadores.',
+    guideText: 'Perfect for newcomers to the Cove, these Rogues are basically harmless outside of being annoying. These lowlifes can also be nice when trying new modules to stabilize the experience.',
+    difficulty: 'Beginner',
+    impact: 'Low',
+    interactivity: 'None',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 2,
+    name: 'Cultists',
+    expansion: 'Core',
+    description: 'Compran cualquier cosa pero arruinan tu reputación. Suavizan la economía.',
+    guideText: 'These mysterious Cultists seem content to buy anything, but selling to them might ruin your reputation. Perfect to smooth out the economy, suitable for all games at all experience levels.',
+    difficulty: 'Beginner',
+    impact: 'Medium',
+    interactivity: 'Low',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 3,
+    name: 'Robbers',
+    expansion: 'Core',
+    description: 'Los rogues más "agresivos" del core. Permiten asegurar o arruinar planes.',
+    guideText: 'These are the most "aggressive" Rogues in the core game, allowing players to secure their own plans, or ruin the carefully plans of others. A good option for players who want a little more teeth in their gameplay.',
+    difficulty: 'Intermediate',
+    impact: 'High',
+    interactivity: 'High',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 4,
+    name: 'Pirates',
+    expansion: 'Secret Stash',
+    description: 'Incentivan arruinar la economía mientras obtienes oro.',
+    guideText: 'The Pirates provide a nice little perverse incentive for players to ruin the economy, while selfishly profiting with a nice boost of gold. These Rogues can help struggling players turn the tables somewhat.',
+    difficulty: 'Intermediate',
+    impact: 'Medium',
+    interactivity: 'Medium',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 5,
+    name: 'The Kraken',
+    expansion: 'Secret Stash',
+    description: 'Puede no aparecer o aparecer mucho. Cada aparición hace la siguiente más probable. Toque de caos.',
+    guideText: 'The Kraken lurks just below the surface of the bay. You might not see them at all. You might see them a lot, and each spotting makes the next all the more likely. Perfect for groups who want a touch of chaos.',
+    difficulty: 'Advanced',
+    impact: 'Chaotic',
+    interactivity: 'High',
+    notRecommendedMultiple: true
+  },
+  {
+    id: 6,
+    name: 'Ghost Sailors',
+    expansion: 'Secret Stash',
+    description: '"Ghostifican" a otros en el mar. La corrupción puede crecer sin control.',
+    guideText: 'These pesky Rogues will Ghostify any poor souls left with them at sea, meaning that Corruption can potentially grow out of control. These are good Rogues to reign in corruption heavy player metas.',
+    difficulty: 'Advanced',
+    impact: 'High',
+    interactivity: 'Medium',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 7,
+    name: 'Grey Walkers',
+    expansion: 'Secret Stash',
+    description: 'Compañeros perfectos de Underworld townsfolk. Compran Rogue Goods.',
+    guideText: 'The Grey Walkers are the perfect companion to the Underworld townsfolk. Corruption stays low because Rogues often dock, and if you can snag a Rogue good, you can turn a mean profit selling to these creeps.',
+    difficulty: 'Intermediate',
+    impact: 'Medium',
+    interactivity: 'Low',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 8,
+    name: 'Raiders',
+    expansion: 'Secret Stash',
+    description: 'Experimentan con efectos de Townsfolk sin contratarlos.',
+    guideText: 'The Raiders add a new way to experience the Townsfolk effects, without having to hire anyone! Good for groups who want to experiment with Townsfolk, but aren\'t ready to commit.',
+    difficulty: 'Beginner',
+    impact: 'Low',
+    interactivity: 'Low',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 9,
+    name: 'Charlatans',
+    expansion: 'Secret Stash',
+    description: 'Ayudan al "little guy" suavizando el market floor.',
+    guideText: 'These petty criminals aren\'t above helping the little guy and smoothing out the market floor. They are particularly useful to the Dragon Rancher who might otherwise have trouble selling their Mega Dragons.',
+    difficulty: 'Beginner',
+    impact: 'Low',
+    interactivity: 'Low',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 10,
+    name: 'Doppelgangers',
+    expansion: 'Secret Stash',
+    description: 'Duplican sponsorship y ventas. Útiles cuando Faction Halls dañan ventas.',
+    guideText: 'The Doppelgangers are perfect for groups who find the growing Faction Halls to be harming their sales. With these strange impersonators, you can double dip on sponsorship and sales.',
+    difficulty: 'Intermediate',
+    impact: 'Medium',
+    interactivity: 'Medium',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 11,
+    name: 'Assassins',
+    expansion: 'Secret Stash',
+    description: 'Eliminan Townsfolk de lejos. Para jugadores que quieren confrontación.',
+    guideText: 'These Rogues are able to tactically eliminate high profile targets from afar. Great for players who recognize the strength of Townsfolk, and who want a more confrontational game, the Assassins fit the bill.',
+    difficulty: 'Advanced',
+    impact: 'Very High',
+    interactivity: 'Very High',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 12,
+    name: 'Warlocks',
+    expansion: 'Secret Stash',
+    description: 'Fuerzan posiciones difíciles. Permiten desviar customers valiosos. Para expertos.',
+    guideText: 'These punishing Rogues can force players into tough positions, while allowing clever players to divert high value customers into a bad boat. For expert players looking for an additional challenge.',
+    difficulty: 'Expert',
+    impact: 'Very High',
+    interactivity: 'Very High',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 13,
+    name: 'Mind Controllers',
+    expansion: 'Secret Stash',
+    description: 'Hacen días más largos. Convencen adventurers de irse a casa.',
+    guideText: 'For players and merchants who which each day was just a little longer. These Rogues can convince adventurers to go home, slowing down the arrival of the boats and denying an opponent sales.',
+    difficulty: 'Advanced',
+    impact: 'High',
+    interactivity: 'High',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 14,
+    name: 'Backers',
+    expansion: 'Secret Stash',
+    description: 'Impacientes con FOMO. Causan que ventas caigan instantáneamente.',
+    guideText: 'Eager and passionate or just impatient. Whatever your view, these Rogues add a touch of unpredictability. Their FOMO can potentially cause the sales to drop in an instant.',
+    difficulty: 'Intermediate',
+    impact: 'Medium',
+    interactivity: 'Medium',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 15,
+    name: 'Conspirators',
+    expansion: 'Secret Stash',
+    description: 'Señalan culpables y culpan al vecino. Experiencia más confrontacional.',
+    guideText: 'Perfect for players who like to engage in corrupt activities and blame in on their neighbor. These finger pointing Rogues make for a more in-your-face experience than most.',
+    difficulty: 'Advanced',
+    impact: 'High',
+    interactivity: 'Very High',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 16,
+    name: 'Union Busters',
+    expansion: 'Master Craft',
+    description: 'Despiden Staff. Útiles contra characters con habilidades de Staff fuertes.',
+    guideText: 'Don\'t worry where your employee went, and here\'s a little bribe to keep quiet. These goons help wrest some of the power from the Townsfolk and characters with strong Staff abilities.',
+    difficulty: 'Advanced',
+    impact: 'High',
+    interactivity: 'High',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 17,
+    name: 'Sirens',
+    expansion: 'Master Craft',
+    description: 'Más sponsorships y ventas menos explosivas en los docks.',
+    guideText: 'More recruits always seem to sign up at the Faction Halls after a sighting. Use these Rogues when you want a little more Sponsorships and to lower the explosive sales at the docks.',
+    difficulty: 'Intermediate',
+    impact: 'Medium',
+    interactivity: 'Low',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 18,
+    name: 'Witches',
+    expansion: 'Master Craft',
+    description: 'Permiten cambiar color de Goods después de producirlos.',
+    guideText: 'The Witches have devised the perfect plan for the indecisive player. Now, you can simply make something, and switch your Goods to the correct color later.',
+    difficulty: 'Intermediate',
+    impact: 'Medium',
+    interactivity: 'Low',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 19,
+    name: 'Un-Fairies',
+    expansion: 'Master Craft',
+    description: 'Estabilizan mercados de explosiones. Buenos con Paladins.',
+    guideText: 'Humans get tattoos of Fairies, fairies get face tattoos. These fairies help stabilize the markets from getting too explosive, especially in concert with their natural enemies, Paladins.',
+    difficulty: 'Intermediate',
+    impact: 'Medium',
+    interactivity: 'Low',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 20,
+    name: 'Loan Sharks',
+    expansion: 'Master Craft',
+    description: 'Dinero ahora, corrupción después. Como Criminals con twist.',
+    guideText: 'Money now. Worry about corruption later. Seems like a simple deal? These rogues are like the Criminals with a small twist, suitable for any game to alleviate the sting of drawing a Rogue.',
+    difficulty: 'Beginner',
+    impact: 'Low',
+    interactivity: 'None',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 21,
+    name: 'The Fence',
+    expansion: 'Master Craft',
+    description: 'Crean ocasionales cambios en dinámicas del mercado.',
+    guideText: 'These Rogues add a nice occasional wrinkle to the market dynamics of the game, letting players make something purely for convenience without worrying about the market demands.',
+    difficulty: 'Intermediate',
+    impact: 'Medium',
+    interactivity: 'Low',
+    notRecommendedMultiple: true
+  },
+  {
+    id: 'B1',
+    name: 'Genies',
+    expansion: 'Backer Built',
+    description: 'Si produces lo mismo que otros, no ganas ventaja.',
+    guideText: 'If you produce the same thing as everyone else, you won\'t gain an advantage over them. Such is the way of the Genie when they grant wishes without reading the fine print.',
+    difficulty: 'Intermediate',
+    impact: 'Medium',
+    interactivity: 'Medium',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 'B2',
+    name: 'Vigilantes',
+    expansion: 'Backer Built',
+    description: 'Eliminan corrupción gradualmente convirtiéndola en vigilantes.',
+    guideText: 'These Rogues gradually cause Corruption to go away as they turn criminals into unlicensed street vigilantes. If players don\'t let them dock Corruption will remain extremely costly.',
+    difficulty: 'Advanced',
+    impact: 'High',
+    interactivity: 'High',
+    notRecommendedMultiple: true
+  },
+  {
+    id: 'B3',
+    name: 'Revolutionaries',
+    expansion: 'Backer Built',
+    description: '⚠️ NO para juego serio. Más corrupción = mejor. Solo para curiosos.',
+    guideText: 'Not intended for serious play, the Revolutionaries turn the game on its head. The more corruption the better. No really, this is for curious and unserious players only.',
+    difficulty: 'Expert',
+    impact: 'Chaotic',
+    interactivity: 'Very High',
+    notRecommendedMultiple: true
+  },
+  {
+    id: 'B4',
+    name: 'Superbackers',
+    expansion: 'Backer Built',
+    description: 'Intensifican presión del mercado. Floor desaparece pero ceiling sube.',
+    guideText: 'These Superbackers intensify the pressures of the market. The floor is gone, but the ceiling has been raised. Good for cut throat groups looking for that extra little edge.',
+    difficulty: 'Advanced',
+    impact: 'Very High',
+    interactivity: 'High',
+    notRecommendedMultiple: false
+  },
+  {
+    id: 'B5',
+    name: 'Automatons',
+    expansion: 'Backer Built',
+    description: 'Bots aburridos pero motivados. No arruinan mucho tu reputación.',
+    guideText: 'We aren\'t sure why these bots were programmed to feel bored, but it works as a powerful motivator. It won\'t ruin your reputation too much to have them help out around the shop.',
+    difficulty: 'Beginner',
+    impact: 'Low',
+    interactivity: 'None',
+    notRecommendedMultiple: false
+  }
+];
