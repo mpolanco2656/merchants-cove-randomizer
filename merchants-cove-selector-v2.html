@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merchants Cove - Setup Selector</title>
+    <script defer crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script defer crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 16px; 
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { 
+            text-align: center; 
+            color: #4a5568; 
+            margin-bottom: 8px;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 32px;
+            font-size: 16px;
+        }
+        
+        /* Filters */
+        .filters {
+            background: #f7fafc;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .filter-group {
+            margin-bottom: 20px;
+        }
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+        .filter-label {
+            display: block;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Sliders */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .slider {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .slider-value {
+            min-width: 120px;
+            text-align: right;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        /* Inputs */
+        .input-row {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        .input-group {
+            flex: 1;
+        }
+        select, input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        /* Checkboxes */
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .checkbox-item:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 14px;
+            color: #2d3748;
+            user-select: none;
+        }
+        
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        /* Results */
+        .results {
+            margin-top: 32px;
+        }
+        .results-section {
+            margin-bottom: 32px;
+        }
+        .results-section:last-child {
+            margin-bottom: 0;
+        }
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        /* Cards */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .result-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+        .result-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+        }
+        .result-card.random-selection {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-color: #667eea;
+            border-width: 3px;
+        }
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .result-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3748;
+            flex: 1;
+        }
+        .result-number {
+            background: #667eea;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+        .result-complexity {
+            color: #f59e0b;
+            font-size: 18px;
+            margin-left: 8px;
+        }
+        .result-mechanics {
+            color: #667eea;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .result-description {
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        .result-guide-text {
+            color: #718096;
+            font-size: 13px;
+            line-height: 1.5;
+            font-style: italic;
+            margin-bottom: 12px;
+            padding-left: 12px;
+            border-left: 3px solid #e2e8f0;
+        }
+        .result-expansion {
+            display: inline-block;
+            background: #edf2f7;
+            color: #4a5568;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-synergy {
+            background: #f0fdf4;
+            border-left: 3px solid #10b981;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 4px;
+        }
+        .result-synergy-title {
+            font-weight: 600;
+            color: #059669;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        .result-synergy-text {
+            color: #047857;
+            font-size: 13px;
+        }
+        .badge {
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .badge-not-recommended {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        /* Info boxes */
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+        .info-box-title {
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 8px;
+        }
+        .info-box-text {
+            color: #1e3a8a;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .info-box-text ul {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+        .info-box-text li {
+            margin-bottom: 4px;
+        }
+        
+        .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+        .warning-box-title {
+            font-weight: 700;
+            color: #92400e;
+            margin-bottom: 8px;
+        }
+        .warning-box-text {
+            color: #78350f;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 48px 20px;
+            color: #718096;
+        }
+        .no-results-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script>
+        window.addEventListener('load', function() {
+            const { useState, createElement: e } = React;
+            
+            // Data completa
+            const merchants = [
+                { id: 4, name: 'Alchemist', fullName: 'Phoenestra Orwyn', complexity: 2, mechanics: 'Bag building, marble matching', description: 'Mezcla ingredientes de una bolsa para hacer pociones. Aleatorio pero manejable.', guideText: 'Brew potions with ingredients from a bag. The alchemist is potentially the most explosive and flexible merchant in the core game.', expansion: 'Core', tips: 'Try not to brew unless activating 3+ cauldrons. Your explosiveness falls if too much Ichor ends up in Toxic Waste.' },
+                { id: 5, name: 'Blacksmith', fullName: 'Olaf Thundercrack', complexity: 1, mechanics: 'Dice placement and management', description: 'Forja armas con dados. Directo y poderoso para nuevos jugadores.', guideText: 'The blacksmith is a powerful merchant especially for new players. Try not to create goods unless you have a minimum of three filled furnaces.', expansion: 'Core', tips: 'Make sure unlocking new alloy dice often. Taking corruption to preserve dice colors is often worth it.' },
+                { id: 6, name: 'Captain', fullName: 'Ylva Greentail', complexity: 1, mechanics: 'Fleet management, push your luck, spinner', description: 'Navega aguas traicioneras con una flota de barcos. Simple y amigable para principiantes.', guideText: 'You should almost always take the extra spin from the Compass. Your treasures renew at the end of each round, use this to your advantage.', expansion: 'Core', tips: 'Try not to recall ships unless recalling at least three. You can easily acquire 3 small red/green goods.' },
+                { id: 7, name: 'Chronomancer', fullName: 'Wiz Grey & Humpty McHalf', complexity: 3, mechanics: 'Time manipulation, temporal anomalies', description: 'Manipula el tiempo con dos trabajadores. Coordinación compleja requerida.', guideText: 'Manipulate time with two workers. Use your time advantage to react to the market.', expansion: 'Core', tips: 'Complex coordination required between your two workers.' },
+                { id: 8, name: 'Dragon Rancher', fullName: 'Dwelma Draketooth', complexity: 2, mechanics: 'Mancala dragon feeding and movement', description: 'Cría dragones con mecánicas de bag-building y mancala. Único y desafiante.', guideText: 'White-colored food tokens count as any color when eating. Remember you only have 2 of each small dragon. Beware large sale multipliers on central pier.', expansion: 'Core', tips: 'Clearing trees helps with sponsorship and increases food draw chance.' },
+                { id: 9, name: 'Innkeeper', fullName: 'Mr. Nasty', complexity: 2, mechanics: 'Speculation, preparation, personal scoring', description: 'Sirve bebidas y atrae clientes leales. Requiere predicción del mercado.', guideText: 'The Innkeeper massively benefits from ships with multiple tied majorities. Pay close attention to what others are producing.', expansion: 'Secret Stash', tips: 'Staff is very important - only way to manipulate beds after committing.' },
+                { id: 10, name: 'Oracle', fullName: 'Haggatha Sagebrush', complexity: 4, mechanics: 'Roll and write, divination', description: 'Lanza encantos en un plato adivinatorio. Muy aleatorio pero flexible.', guideText: 'Toss charms into a divining dish. Very random but flexible. Enchantments work great with you.', expansion: 'Secret Stash', tips: 'Make goods earlier in the round to capitalize on big multipliers.' },
+                { id: 11, name: 'Thief', fullName: 'D.B. Culper', complexity: 3, mechanics: 'Worker placement, opportunism, corruption', description: 'Mecánicas de sigilo de nivel experto. Usa corrupción a tu favor.', guideText: 'Efficiency is key when recalling Rogues. Gain Corruption whenever you can since it is always useful. In final round, spread Rogues to docks, halls, and especially the Lair.', expansion: 'Secret Stash', tips: 'Not fully compatible with all modules since you replace main Rogue card.' },
+                { id: 12, name: 'Detective', fullName: 'Hemlock Trolmes', complexity: 2, mechanics: 'Overlapping transparent cards, deduction', description: 'Resuelve casos superponiendo cartas de pistas. Estratégico y temático.', guideText: 'Solve cases by overlaying clue cards. Strategic and thematic.', expansion: 'Master Craft', tips: 'Plan your card overlays carefully for maximum deduction.' },
+                { id: 13, name: 'Pastry Chef', fullName: 'Aveline Shortcake', complexity: 3, mechanics: 'Interlocking gears, timing, threshold manipulation', description: 'Hornea productos usando engranajes entrelazados. El tiempo lo es todo.', guideText: 'The use of the Mixer with Rest action is key. Frostings provide steady sponsorship income. Staff board actions are some of the best in the game.', expansion: 'Master Craft', tips: 'Mind you only have 2 of each good. Focus on denying matching meeples to opponents.' },
+                { id: 14, name: 'Mushroom Farmer', fullName: 'Amanita Moghed', complexity: 4, mechanics: 'Hex grid, insect movement, cultivation', description: 'Cultiva hongos con insectos en una cuadrícula hexagonal. Rompecabezas espacial complejo.', guideText: 'Proper insect play order is essential. If you keep large goods after growth cycle, they turn small and give 1 Corruption. When activating Snail, plan dirt tile placement.', expansion: 'Master Craft', tips: 'Try to return only 1-2 Action tiles when necessary since Corruption gets punishing.' },
+                { id: 15, name: 'Treasure Diver', fullName: 'Jacques Greentail', complexity: 4, mechanics: 'Push-your-luck bag-building', description: 'Bucea por tesoros y arriesga tu suerte. Alto riesgo, alta recompensa.', guideText: 'To win you will occasionally need to take risks and push deeper. Getting Maps and Lanterns early is essential. Make the most of every hour by buying/filling/crafting multiple things at once.', expansion: 'Master Craft', tips: 'If not staying above Diving Lantern token, go as deep as possible without busting.' },
+                { id: 16, name: 'Game Maker', fullName: 'Johann Pach', complexity: 2, mechanics: 'Card melding, rotating, management', description: 'Crea juegos mezclando y rotando cartas. Flexible y creativo.', guideText: 'Your Staff (Freelancers) are much more flexible than others. Build spaces early. Watch for Faction Halls filling. You are the only Shopkeeper who can naturally sell to Rogues.', expansion: 'Master Craft', tips: 'Clever use of Rotate Stall and Move cards Staff action allows fixing tough layouts.' },
+                { id: 17, name: 'Entertainer', fullName: 'The Entertainer', complexity: 3, mechanics: 'Deckbuilding, tempo management, movement', description: 'Realiza espectáculos con mecánicas de deckbuilding. Control estratégico del tempo.', guideText: 'You gain significant Gold during Production Phase. Grabbing a fan early expands hand size. Timing is key - ideally sing one song mid-round and one during Market Phase.', expansion: 'Bardwood Grove', tips: 'Focus on setting up in first round by grabbing fans, creatures, and new cards.' }
+            ];
+            
+            const townsfolk = [
+                { name: 'Locals', expansion: 'Core', description: 'Ayudan a descartar corrupción. Ideales para principiantes.', guideText: 'The Locals are a great inclusion choice for both beginners and experienced merchants. They help smooth the corruption curve and offer a good amount of Faction Icons for end game scoring.', interactivity: 'Low', complexity: 'Beginner', requires: null },
+                { name: 'Mercenaries', expansion: 'Core', description: 'Proporcionan bienes e iconos de facción. Buenos para merchants menos flexibles.', guideText: 'The Mercenaries help round out many characters by providing access to both Goods and Faction icons, allowing Merchants, especially less-flexible ones, to potentially capitalize on big sales they would have otherwise missed out on.', interactivity: 'Low', complexity: 'Beginner', requires: null },
+                { name: 'Sailors', expansion: 'Core', description: 'Manipulan adventurers en los barcos. MUY interactivos y pueden ser agresivos.', guideText: 'The Sailors can have a massive impact on the game. Being able to slow a round by placing an Adventurer back in the bag, or accelerating a round by placing a new Adventurer, or creating the perfect sale opportunity. Depending on your group, these can lead to cutthroat gameplay.', interactivity: 'Very High', complexity: 'Intermediate', requires: null },
+                { name: 'Artisans', expansion: 'Secret Stash', description: 'Versión "segura" de Mercenaries. Sin iconos de Rogue faction.', guideText: 'The Artisans are the "safer" version of the Mercenaries. They don\'t give Rogue Faction icons, they don\'t have any Faction Icons at all. Instead, they let you both remove corruption and produce goods.', interactivity: 'Low', complexity: 'Beginner', requires: null },
+                { name: 'Officials', expansion: 'Secret Stash', description: 'Acceso temprano a habilidades de Staff.', guideText: 'The Officials allow players to access their Staff abilities much sooner than usual, and lead to a very interesting game. These Townsfolk help round out any set you decide to use.', interactivity: 'Medium', complexity: 'Intermediate', requires: null },
+                { name: 'Underworld', expansion: 'Secret Stash', description: 'Habilidades fuertes con pocos iconos de facción. Pueden crear "Rogue Goods" de 10 oro.', guideText: 'The Underworld Townsfolk have very strong abilities at the cost of little to poor Faction Icons. They allow you to Recruit another staff immediately, or gain a rare "Rogue Good" worth 10 Gold that can be sold to Rogues on any dock.', interactivity: 'Medium', complexity: 'Advanced', requires: null },
+                { name: 'Legends', expansion: 'Secret Stash', description: 'Basados en scoring de iconos de facción.', guideText: 'The Legends townsfolk are based on the idea of having a lot of Faction Icon scoring. They provide a nice alternative to purely goods-based strategies.', interactivity: 'Low', complexity: 'Intermediate', requires: null },
+                { name: 'Insiders', expansion: 'Master Craft', description: 'Dan sponsorship cada Market Phase en lugar de solo al final.', guideText: 'You may notice some familiar faces here, as these Insiders have the inside drop on Faction activities. Uniquely, these Townsfolk give sponsorship each Market Phase, instead of only at the end of the game.', interactivity: 'Medium', complexity: 'Advanced', requires: 'Faction Festival' },
+                { name: 'Lawyers', expansion: 'Master Craft', description: 'Ayudan a eliminar corrupción pasándola a otros jugadores. Interactivo.', guideText: 'These Townsfolk really help players shed their Corruption. Instead of simply dumping it, they can pin the crimes on their fellow merchants. A good alternative for players who want Corruption removal and interaction.', interactivity: 'High', complexity: 'Intermediate', requires: null },
+                { name: 'Apprentices', expansion: 'Master Craft', description: 'Otorgan movimientos extra a Assistants.', guideText: 'The Apprentices will really help you get the most out of your Assistants when using the Faction Festival by granting them extra movements. This is a well rounded set that combines well with most others.', interactivity: 'Medium', complexity: 'Advanced', requires: 'Faction Festival' },
+                { name: 'Exemplars', expansion: 'Master Craft', description: 'Enfocados en manejar corrupción con Honor tokens.', guideText: 'Another set focused on dealing with Corruption. These Townsfolk provide a great replacement for the Locals whenever you play with Honor tokens. Be careful about providing too much access to Corruption removal.', interactivity: 'Low', complexity: 'Intermediate', requires: 'Paladins' },
+                { name: 'Inventors', expansion: 'Loot Pack', description: 'Traen invenciones que ahorran tiempo en momentos críticos.', guideText: 'These clever Townsfolk are clearly fans of the Chronomancer. They bring their Inventions with them when hired, and can use their contraptions a single time to help you save time at a critical moment. These well-rounded townsfolk are always a safe inclusion for expert players.', interactivity: 'Low', complexity: 'Advanced', requires: null },
+                { name: 'Pets', expansion: 'Loot Pack', description: 'Costo de contratación reducido o gratis. Buenos para grupos que no usan mucho Staff.', guideText: 'There\'s an adoption drive and many of these pets need a new home. Enjoy a subsidized hiring cost, allowing you to get somewhat competent employees for very cheap (or even free in some cases). Great for groups who underutilize their Staff boards.', interactivity: 'Low', complexity: 'Beginner', requires: null }
+            ];
+            
+            const rogues = [
+                { id: 1, name: 'Criminals', expansion: 'Core', description: 'Prácticamente inofensivos. Perfectos para nuevos jugadores.', guideText: 'Perfect for newcomers to the Cove, these Rogues are basically harmless outside of being annoying. These lowlifes can also be nice when trying new modules to stabilize the experience.', difficulty: 'Beginner', impact: 'Low', interactivity: 'None', notRecommendedMultiple: false },
+                { id: 2, name: 'Cultists', expansion: 'Core', description: 'Compran cualquier cosa pero arruinan tu reputación. Suavizan la economía.', guideText: 'These mysterious Cultists seem content to buy anything, but selling to them might ruin your reputation. Perfect to smooth out the economy, suitable for all games at all experience levels.', difficulty: 'Beginner', impact: 'Medium', interactivity: 'Low', notRecommendedMultiple: false },
+                { id: 3, name: 'Robbers', expansion: 'Core', description: 'Los rogues más "agresivos" del core. Permiten asegurar o arruinar planes.', guideText: 'These are the most "aggressive" Rogues in the core game, allowing players to secure their own plans, or ruin the carefully plans of others. A good option for players who want a little more teeth in their gameplay.', difficulty: 'Intermediate', impact: 'High', interactivity: 'High', notRecommendedMultiple: false },
+                { id: 4, name: 'Pirates', expansion: 'Secret Stash', description: 'Incentivan arruinar la economía mientras obtienes oro.', guideText: 'The Pirates provide a nice little perverse incentive for players to ruin the economy, while selfishly profiting with a nice boost of gold. These Rogues can help struggling players turn the tables somewhat.', difficulty: 'Intermediate', impact: 'Medium', interactivity: 'Medium', notRecommendedMultiple: false },
+                { id: 5, name: 'The Kraken', expansion: 'Secret Stash', description: 'Puede no aparecer o aparecer mucho. Cada aparición hace la siguiente más probable. Toque de caos.', guideText: 'The Kraken lurks just below the surface of the bay. You might not see them at all. You might see them a lot, and each spotting makes the next all the more likely. Perfect for groups who want a touch of chaos.', difficulty: 'Advanced', impact: 'Chaotic', interactivity: 'High', notRecommendedMultiple: true },
+                { id: 6, name: 'Ghost Sailors', expansion: 'Secret Stash', description: '"Ghostifican" a otros en el mar. La corrupción puede crecer sin control.', guideText: 'These pesky Rogues will Ghostify any poor souls left with them at sea, meaning that Corruption can potentially grow out of control. These are good Rogues to reign in corruption heavy player metas.', difficulty: 'Advanced', impact: 'High', interactivity: 'Medium', notRecommendedMultiple: false },
+                { id: 7, name: 'Grey Walkers', expansion: 'Secret Stash', description: 'Compañeros perfectos de Underworld townsfolk. Compran Rogue Goods.', guideText: 'The Grey Walkers are the perfect companion to the Underworld townsfolk. Corruption stays low because Rogues often dock, and if you can snag a Rogue good, you can turn a mean profit selling to these creeps.', difficulty: 'Intermediate', impact: 'Medium', interactivity: 'Low', notRecommendedMultiple: false },
+                { id: 8, name: 'Raiders', expansion: 'Secret Stash', description: 'Experimentan con efectos de Townsfolk sin contratarlos.', guideText: 'The Raiders add a new way to experience the Townsfolk effects, without having to hire anyone! Good for groups who want to experiment with Townsfolk, but aren\'t ready to commit.', difficulty: 'Beginner', impact: 'Low', interactivity: 'Low', notRecommendedMultiple: false },
+                { id: 9, name: 'Charlatans', expansion: 'Secret Stash', description: 'Ayudan al "little guy" suavizando el market floor.', guideText: 'These petty criminals aren\'t above helping the little guy and smoothing out the market floor. They are particularly useful to the Dragon Rancher who might otherwise have trouble selling their Mega Dragons.', difficulty: 'Beginner', impact: 'Low', interactivity: 'Low', notRecommendedMultiple: false },
+                { id: 10, name: 'Doppelgangers', expansion: 'Secret Stash', description: 'Duplican sponsorship y ventas. Útiles cuando Faction Halls dañan ventas.', guideText: 'The Doppelgangers are perfect for groups who find the growing Faction Halls to be harming their sales. With these strange impersonators, you can double dip on sponsorship and sales.', difficulty: 'Intermediate', impact: 'Medium', interactivity: 'Medium', notRecommendedMultiple: false },
+                { id: 11, name: 'Assassins', expansion: 'Secret Stash', description: 'Eliminan Townsfolk de lejos. Para jugadores que quieren confrontación.', guideText: 'These Rogues are able to tactically eliminate high profile targets from afar. Great for players who recognize the strength of Townsfolk, and who want a more confrontational game, the Assassins fit the bill.', difficulty: 'Advanced', impact: 'Very High', interactivity: 'Very High', notRecommendedMultiple: false },
+                { id: 12, name: 'Warlocks', expansion: 'Secret Stash', description: 'Fuerzan posiciones difíciles. Permiten desviar customers valiosos. Para expertos.', guideText: 'These punishing Rogues can force players into tough positions, while allowing clever players to divert high value customers into a bad boat. For expert players looking for an additional challenge.', difficulty: 'Expert', impact: 'Very High', interactivity: 'Very High', notRecommendedMultiple: false },
+                { id: 13, name: 'Mind Controllers', expansion: 'Secret Stash', description: 'Hacen días más largos. Convencen adventurers de irse a casa.', guideText: 'For players and merchants who which each day was just a little longer. These Rogues can convince adventurers to go home, slowing down the arrival of the boats and denying an opponent sales.', difficulty: 'Advanced', impact: 'High', interactivity: 'High', notRecommendedMultiple: false },
+                { id: 14, name: 'Backers', expansion: 'Secret Stash', description: 'Impacientes con FOMO. Causan que ventas caigan instantáneamente.', guideText: 'Eager and passionate or just impatient. Whatever your view, these Rogues add a touch of unpredictability. Their FOMO can potentially cause the sales to drop in an instant.', difficulty: 'Intermediate', impact: 'Medium', interactivity: 'Medium', notRecommendedMultiple: false },
+                { id: 15, name: 'Conspirators', expansion: 'Secret Stash', description: 'Señalan culpables y culpan al vecino. Experiencia más confrontacional.', guideText: 'Perfect for players who like to engage in corrupt activities and blame in on their neighbor. These finger pointing Rogues make for a more in-your-face experience than most.', difficulty: 'Advanced', impact: 'High', interactivity: 'Very High', notRecommendedMultiple: false },
+                { id: 16, name: 'Union Busters', expansion: 'Master Craft', description: 'Despiden Staff. Útiles contra characters con habilidades de Staff fuertes.', guideText: 'Don\'t worry where your employee went, and here\'s a little bribe to keep quiet. These goons help wrest some of the power from the Townsfolk and characters with strong Staff abilities.', difficulty: 'Advanced', impact: 'High', interactivity: 'High', notRecommendedMultiple: false },
+                { id: 17, name: 'Sirens', expansion: 'Master Craft', description: 'Más sponsorships y ventas menos explosivas en los docks.', guideText: 'More recruits always seem to sign up at the Faction Halls after a sighting. Use these Rogues when you want a little more Sponsorships and to lower the explosive sales at the docks.', difficulty: 'Intermediate', impact: 'Medium', interactivity: 'Low', notRecommendedMultiple: false },
+                { id: 18, name: 'Witches', expansion: 'Master Craft', description: 'Permiten cambiar color de Goods después de producirlos.', guideText: 'The Witches have devised the perfect plan for the indecisive player. Now, you can simply make something, and switch your Goods to the correct color later.', difficulty: 'Intermediate', impact: 'Medium', interactivity: 'Low', notRecommendedMultiple: false },
+                { id: 19, name: 'Un-Fairies', expansion: 'Master Craft', description: 'Estabilizan mercados de explosiones. Buenos con Paladins.', guideText: 'Humans get tattoos of Fairies, fairies get face tattoos. These fairies help stabilize the markets from getting too explosive, especially in concert with their natural enemies, Paladins.', difficulty: 'Intermediate', impact: 'Medium', interactivity: 'Low', notRecommendedMultiple: false },
+                { id: 20, name: 'Loan Sharks', expansion: 'Master Craft', description: 'Dinero ahora, corrupción después. Como Criminals con twist.', guideText: 'Money now. Worry about corruption later. Seems like a simple deal? These rogues are like the Criminals with a small twist, suitable for any game to alleviate the sting of drawing a Rogue.', difficulty: 'Beginner', impact: 'Low', interactivity: 'None', notRecommendedMultiple: false },
+                { id: 21, name: 'The Fence', expansion: 'Master Craft', description: 'Crean ocasionales cambios en dinámicas del mercado.', guideText: 'These Rogues add a nice occasional wrinkle to the market dynamics of the game, letting players make something purely for convenience without worrying about the market demands.', difficulty: 'Intermediate', impact: 'Medium', interactivity: 'Low', notRecommendedMultiple: true },
+                { id: 'B1', name: 'Genies', expansion: 'Backer Built', description: 'Si produces lo mismo que otros, no ganas ventaja.', guideText: 'If you produce the same thing as everyone else, you won\'t gain an advantage over them. Such is the way of the Genie when they grant wishes without reading the fine print.', difficulty: 'Intermediate', impact: 'Medium', interactivity: 'Medium', notRecommendedMultiple: false },
+                { id: 'B2', name: 'Vigilantes', expansion: 'Backer Built', description: 'Eliminan corrupción gradualmente convirtiéndola en vigilantes.', guideText: 'These Rogues gradually cause Corruption to go away as they turn criminals into unlicensed street vigilantes. If players don\'t let them dock Corruption will remain extremely costly.', difficulty: 'Advanced', impact: 'High', interactivity: 'High', notRecommendedMultiple: true },
+                { id: 'B3', name: 'Revolutionaries', expansion: 'Backer Built', description: '⚠️ NO para juego serio. Más corrupción = mejor. Solo para curiosos.', guideText: 'Not intended for serious play, the Revolutionaries turn the game on its head. The more corruption the better. No really, this is for curious and unserious players only.', difficulty: 'Expert', impact: 'Chaotic', interactivity: 'Very High', notRecommendedMultiple: true },
+                { id: 'B4', name: 'Superbackers', expansion: 'Backer Built', description: 'Intensifican presión del mercado. Floor desaparece pero ceiling sube.', guideText: 'These Superbackers intensify the pressures of the market. The floor is gone, but the ceiling has been raised. Good for cut throat groups looking for that extra little edge.', difficulty: 'Advanced', impact: 'Very High', interactivity: 'High', notRecommendedMultiple: false },
+                { id: 'B5', name: 'Automatons', expansion: 'Backer Built', description: 'Bots aburridos pero motivados. No arruinan mucho tu reputación.', guideText: 'We aren\'t sure why these bots were programmed to feel bored, but it works as a powerful motivator. It won\'t ruin your reputation too much to have them help out around the shop.', difficulty: 'Beginner', impact: 'Low', interactivity: 'None', notRecommendedMultiple: false }
+            ];
+            
+            function App() {
+                const [playerCount, setPlayerCount] = useState(4);
+                const [complexity, setComplexity] = useState(2);
+                const [interactivity, setInteractivity] = useState(2);
+                const [hasFactionFestival, setHasFactionFestival] = useState(false);
+                const [hasPaladins, setHasPaladins] = useState(false);
+                const [useMultipleRogues, setUseMultipleRogues] = useState(false);
+                const [useManyTownsfolk, setUseManyTownsfolk] = useState(false);
+                const [townsfolkCount, setTownsfolkCount] = useState(2);
+                const [mode, setMode] = useState('');
+                const [randomSetup, setRandomSetup] = useState(null);
+                
+                const complexityLabels = ['Muy Fácil', 'Fácil', 'Intermedio', 'Avanzado', 'Experto'];
+                const interactivityLabels = ['Muy Baja', 'Baja', 'Media', 'Alta', 'Muy Alta'];
+                
+                const filteredMerchants = merchants.filter(m => 
+                    m.complexity <= complexity + 1
+                );
+                
+                const filteredTownsfolk = townsfolk.filter(t => {
+                    if (t.requires === 'Faction Festival' && !hasFactionFestival) return false;
+                    if (t.requires === 'Paladins' && !hasPaladins) return false;
+                    return true;
+                });
+                
+                const filteredRogues = rogues.filter(r => {
+                    const difficultyMap = { 'Beginner': 1, 'Intermediate': 2, 'Advanced': 3, 'Expert': 4 };
+                    return difficultyMap[r.difficulty] <= complexity + 1;
+                });
+                
+                const generateRandom = () => {
+                    if (filteredMerchants.length === 0) {
+                        alert('No hay merchants disponibles con estos filtros');
+                        return;
+                    }
+                    
+                    // Seleccionar Merchants
+                    const selectedMerchants = [];
+                    const availableMerchants = [...filteredMerchants];
+                    for (let i = 0; i < Math.min(playerCount, availableMerchants.length); i++) {
+                        const randomIndex = Math.floor(Math.random() * availableMerchants.length);
+                        selectedMerchants.push(availableMerchants[randomIndex]);
+                        availableMerchants.splice(randomIndex, 1);
+                    }
+                    
+                    // Seleccionar Townsfolk
+                    const selectedTownsfolk = [];
+                    const availableTownsfolk = [...filteredTownsfolk];
+                    const numSets = useManyTownsfolk ? Math.min(townsfolkCount, availableTownsfolk.length) : 2;
+                    
+                    for (let i = 0; i < numSets; i++) {
+                        if (availableTownsfolk.length === 0) break;
+                        const randomIndex = Math.floor(Math.random() * availableTownsfolk.length);
+                        selectedTownsfolk.push(availableTownsfolk[randomIndex]);
+                        availableTownsfolk.splice(randomIndex, 1);
+                    }
+                    
+                    // Seleccionar Rogues
+                    let selectedRogues;
+                    if (useMultipleRogues) {
+                        const availableRoguesForMultiple = filteredRogues.filter(r => !r.notRecommendedMultiple);
+                        selectedRogues = [];
+                        const tempRogues = [...availableRoguesForMultiple];
+                        
+                        for (let i = 0; i < Math.min(3, tempRogues.length); i++) {
+                            const randomIndex = Math.floor(Math.random() * tempRogues.length);
+                            selectedRogues.push(tempRogues[randomIndex]);
+                            tempRogues.splice(randomIndex, 1);
+                        }
+                    } else {
+                        const randomRogue = filteredRogues[Math.floor(Math.random() * filteredRogues.length)];
+                        selectedRogues = [randomRogue];
+                    }
+                    
+                    setRandomSetup({
+                        merchants: selectedMerchants,
+                        townsfolk: selectedTownsfolk,
+                        rogues: selectedRogues
+                    });
+                    setMode('random');
+                };
+                
+                return e('div', { className: 'container' },
+                    e('h1', null, '⚓ Merchants Cove Setup Selector'),
+                    e('div', { className: 'subtitle' }, 
+                        'Herramienta interactiva para seleccionar la configuración perfecta de tu partida'
+                    ),
+                    
+                    // Filters
+                    e('div', { className: 'filters' },
+                        // Player Count
+                        e('div', { className: 'filter-group' },
+                            e('label', { className: 'filter-label' }, 'Número de Jugadores'),
+                            e('select', {
+                                value: playerCount,
+                                onChange: (ev) => setPlayerCount(parseInt(ev.target.value)),
+                                style: { maxWidth: '200px' }
+                            },
+                                e('option', { value: 1 }, '1 Jugador (Solo)'),
+                                e('option', { value: 2 }, '2 Jugadores'),
+                                e('option', { value: 3 }, '3 Jugadores'),
+                                e('option', { value: 4 }, '4 Jugadores'),
+                                e('option', { value: 5 }, '5 Jugadores')
+                            )
+                        ),
+                        
+                        // Complexity Slider
+                        e('div', { className: 'filter-group' },
+                            e('label', { className: 'filter-label' }, 'Complejidad Máxima'),
+                            e('div', { className: 'slider-container' },
+                                e('input', {
+                                    type: 'range',
+                                    min: 0,
+                                    max: 4,
+                                    value: complexity,
+                                    onChange: (ev) => setComplexity(parseInt(ev.target.value)),
+                                    className: 'slider'
+                                }),
+                                e('span', { className: 'slider-value' }, complexityLabels[complexity])
+                            )
+                        ),
+                        
+                        // Interactivity Slider
+                        e('div', { className: 'filter-group' },
+                            e('label', { className: 'filter-label' }, 'Interactividad Deseada'),
+                            e('div', { className: 'slider-container' },
+                                e('input', {
+                                    type: 'range',
+                                    min: 0,
+                                    max: 4,
+                                    value: interactivity,
+                                    onChange: (ev) => setInteractivity(parseInt(ev.target.value)),
+                                    className: 'slider'
+                                }),
+                                e('span', { className: 'slider-value' }, interactivityLabels[interactivity])
+                            )
+                        ),
+                        
+                        // Module Checkboxes
+                        e('div', { className: 'filter-group' },
+                            e('label', { className: 'filter-label' }, 'Módulos / Expansiones Disponibles'),
+                            e('div', { className: 'checkbox-group' },
+                                e('div', { className: 'checkbox-item' },
+                                    e('input', {
+                                        type: 'checkbox',
+                                        id: 'factionFestival',
+                                        checked: hasFactionFestival,
+                                        onChange: (ev) => setHasFactionFestival(ev.target.checked)
+                                    }),
+                                    e('label', { htmlFor: 'factionFestival' }, '⚔️ Faction Festival')
+                                ),
+                                e('div', { className: 'checkbox-item' },
+                                    e('input', {
+                                        type: 'checkbox',
+                                        id: 'paladins',
+                                        checked: hasPaladins,
+                                        onChange: (ev) => setHasPaladins(ev.target.checked)
+                                    }),
+                                    e('label', { htmlFor: 'paladins' }, '🛡️ Paladins')
+                                )
+                            )
+                        ),
+                        
+                        // Townsfolk Options
+                        e('div', { className: 'filter-group' },
+                            e('label', { className: 'filter-label' }, 'Configuración de Townsfolk'),
+                            e('div', { className: 'checkbox-group' },
+                                e('div', { className: 'checkbox-item' },
+                                    e('input', {
+                                        type: 'checkbox',
+                                        id: 'manyTownsfolk',
+                                        checked: useManyTownsfolk,
+                                        onChange: (ev) => setUseManyTownsfolk(ev.target.checked)
+                                    }),
+                                    e('label', { htmlFor: 'manyTownsfolk' }, '👥 Many Townsfolk (más de 2 sets)')
+                                )
+                            ),
+                            useManyTownsfolk && e('div', { style: { marginTop: '12px' } },
+                                e('label', { style: { fontSize: '13px', color: '#4a5568', marginBottom: '8px', display: 'block' } }, 
+                                    'Cantidad de Sets de Townsfolk:'
+                                ),
+                                e('input', {
+                                    type: 'number',
+                                    min: 2,
+                                    max: filteredTownsfolk.length,
+                                    value: townsfolkCount,
+                                    onChange: (ev) => setTownsfolkCount(Math.max(2, Math.min(filteredTownsfolk.length, parseInt(ev.target.value) || 2))),
+                                    style: { maxWidth: '100px' }
+                                })
+                            )
+                        ),
+                        
+                        // Multiple Rogues Variant
+                        e('div', { className: 'filter-group' },
+                            e('label', { className: 'filter-label' }, 'Variantes de Rogues'),
+                            e('div', { className: 'checkbox-group' },
+                                e('div', { className: 'checkbox-item' },
+                                    e('input', {
+                                        type: 'checkbox',
+                                        id: 'multipleRogues',
+                                        checked: useMultipleRogues,
+                                        onChange: (ev) => setUseMultipleRogues(ev.target.checked)
+                                    }),
+                                    e('label', { htmlFor: 'multipleRogues' }, '🗡️ Multiple Rogues (3 cartas)')
+                                )
+                            )
+                        )
+                    ),
+                    
+                    // Info boxes
+                    e('div', { className: 'info-box' },
+                        e('div', { className: 'info-box-title' }, '📋 Setup Recomendado'),
+                        e('div', { className: 'info-box-text' }, 
+                            e('ul', null,
+                                e('li', null, e('strong', null, 'Merchants:'), ' El randomizer seleccionará ', playerCount, ' merchants según complejidad'),
+                                e('li', null, e('strong', null, 'Townsfolk:'), ' 2 sets por defecto (Locals + Mercenaries recomendados para primera partida)'),
+                                e('li', null, e('strong', null, 'Rogues:'), ' 1 carta por defecto (variante Multiple Rogues: 3 cartas barajadas)'),
+                                e('li', null, e('strong', null, 'Duración:'), ' Faction Festival hace partidas más lentas y amigables. Para días más largos usa variante "Longer Days"')
+                            )
+                        )
+                    ),
+                    
+                    useMultipleRogues && e('div', { className: 'warning-box' },
+                        e('div', { className: 'warning-box-title' }, '⚠️ Variante Multiple Rogues Activada'),
+                        e('div', { className: 'warning-box-text' }, 
+                            'Baraja 3 Rogue cards y colócalas en el área de Rogue. Durante Cleanup de cada ronda, retira la carta superior. NO recomendados: Kraken, The Fence, Vigilantes, Revolutionaries (se excluyen automáticamente del randomizer).'
+                        )
+                    ),
+                    
+                    // Buttons
+                    e('div', { className: 'button-group' },
+                        e('button', { 
+                            className: 'btn btn-primary', 
+                            onClick: generateRandom 
+                        }, '🎲 Generar Setup Aleatorio'),
+                        e('button', { 
+                            className: 'btn btn-secondary', 
+                            onClick: () => setMode('all') 
+                        }, '📋 Ver Todas las Opciones')
+                    ),
+                    
+                    // Results
+                    mode && e('div', { className: 'results' },
+                        // Random Setup
+                        mode === 'random' && randomSetup && e('div', null,
+                            // Merchants
+                            e('div', { className: 'results-section' },
+                                e('h2', { className: 'section-title' }, 
+                                    `⚒️ Merchants Seleccionados (${randomSetup.merchants.length})`
+                                ),
+                                e('div', { className: 'results-grid' },
+                                    randomSetup.merchants.map((m, i) => 
+                                        e('div', { key: i, className: 'result-card random-selection' },
+                                            e('div', { className: 'result-header' },
+                                                e('div', null,
+                                                    e('span', { className: 'result-number' }, '#' + m.id),
+                                                    e('span', { className: 'result-title' }, m.name)
+                                                ),
+                                                e('div', { className: 'result-complexity' }, '⭐'.repeat(m.complexity))
+                                            ),
+                                            e('div', { className: 'result-mechanics' }, m.mechanics),
+                                            e('div', { className: 'result-description' }, m.description),
+                                            e('div', { className: 'result-guide-text' }, '"' + m.guideText + '"'),
+                                            e('span', { className: 'result-expansion' }, m.expansion)
+                                        )
+                                    )
+                                )
+                            ),
+                            
+                            // Townsfolk
+                            e('div', { className: 'results-section' },
+                                e('h2', { className: 'section-title' }, 
+                                    `👥 Townsfolk Sets (${randomSetup.townsfolk.length})`
+                                ),
+                                e('div', { style: { marginBottom: '16px', padding: '12px', background: '#f7fafc', borderRadius: '8px', fontSize: '14px' } },
+                                    '📋 Setup: Mezcla estos ', randomSetup.townsfolk.length, ' sets juntos en un solo mazo. ',
+                                    !useManyTownsfolk && 'Primera partida: Locals + Mercenaries recomendado.'
+                                ),
+                                e('div', { className: 'results-grid' },
+                                    randomSetup.townsfolk.map((t, i) => 
+                                        e('div', { key: i, className: 'result-card random-selection' },
+                                            e('div', { className: 'result-header' },
+                                                e('div', { className: 'result-title' }, 
+                                                    t.name,
+                                                    t.requires && e('span', { className: 'badge' }, `⚠️ Requiere ${t.requires}`)
+                                                )
+                                            ),
+                                            e('div', { className: 'result-description' }, t.description),
+                                            e('div', { className: 'result-guide-text' }, '"' + t.guideText + '"'),
+                                            e('div', { className: 'result-mechanics', style: { marginTop: '8px' } }, 
+                                                'Interactividad: ' + t.interactivity + ' | Complejidad: ' + t.complexity
+                                            ),
+                                            e('span', { className: 'result-expansion' }, t.expansion)
+                                        )
+                                    )
+                                )
+                            ),
+                            
+                            // Rogues
+                            e('div', { className: 'results-section' },
+                                e('h2', { className: 'section-title' }, 
+                                    useMultipleRogues 
+                                        ? `🗡️ Rogue Cards - Multiple Rogues (${randomSetup.rogues.length} cartas barajadas)`
+                                        : '🗡️ Rogue Card'
+                                ),
+                                e('div', { className: 'results-grid' },
+                                    randomSetup.rogues.map((r, i) => 
+                                        e('div', { key: i, className: 'result-card random-selection' },
+                                            e('div', { className: 'result-header' },
+                                                e('div', null,
+                                                    e('span', { className: 'result-number' }, '#' + r.id),
+                                                    e('span', { className: 'result-title' }, r.name)
+                                                ),
+                                                e('div', { className: 'result-complexity' }, 
+                                                    '⭐'.repeat(
+                                                        r.difficulty === 'Beginner' ? 1 : 
+                                                        r.difficulty === 'Intermediate' ? 2 : 
+                                                        r.difficulty === 'Advanced' ? 3 : 4
+                                                    )
+                                                )
+                                            ),
+                                            e('div', { className: 'result-mechanics' }, r.difficulty + ' | Impacto: ' + r.impact),
+                                            e('div', { className: 'result-description' }, r.description),
+                                            e('div', { className: 'result-guide-text' }, '"' + r.guideText + '"'),
+                                            e('div', { className: 'result-mechanics', style: { marginTop: '8px' } }, 
+                                                'Interactividad: ' + r.interactivity
+                                            ),
+                                            e('span', { className: 'result-expansion' }, r.expansion)
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        
+                        // All Options View
+                        mode === 'all' && e('div', null,
+                            // Merchants
+                            e('div', { className: 'results-section' },
+                                e('h2', { className: 'section-title' }, 
+                                    `⚒️ Merchants Disponibles (${filteredMerchants.length})`
+                                ),
+                                filteredMerchants.length > 0 ? e('div', { className: 'results-grid' },
+                                    filteredMerchants.map((m, i) => 
+                                        e('div', { key: i, className: 'result-card' },
+                                            e('div', { className: 'result-header' },
+                                                e('div', null,
+                                                    e('span', { className: 'result-number' }, '#' + m.id),
+                                                    e('span', { className: 'result-title' }, m.name)
+                                                ),
+                                                e('div', { className: 'result-complexity' }, '⭐'.repeat(m.complexity))
+                                            ),
+                                            e('div', { className: 'result-mechanics' }, m.mechanics),
+                                            e('div', { className: 'result-description' }, m.description),
+                                            e('div', { className: 'result-guide-text' }, '"' + m.guideText + '"'),
+                                            e('span', { className: 'result-expansion' }, m.expansion)
+                                        )
+                                    )
+                                ) : e('div', { className: 'no-results' },
+                                    e('div', { className: 'no-results-icon' }, '🔍'),
+                                    e('div', null, 'No hay merchants disponibles con estos criterios')
+                                )
+                            ),
+                            
+                            // Townsfolk
+                            e('div', { className: 'results-section' },
+                                e('h2', { className: 'section-title' }, 
+                                    `👥 Townsfolk Sets Disponibles (${filteredTownsfolk.length})`
+                                ),
+                                filteredTownsfolk.length > 0 ? e('div', { className: 'results-grid' },
+                                    filteredTownsfolk.map((t, i) => 
+                                        e('div', { key: i, className: 'result-card' },
+                                            e('div', { className: 'result-header' },
+                                                e('div', { className: 'result-title' }, 
+                                                    t.name,
+                                                    t.requires && e('span', { className: 'badge' }, `⚠️ Requiere ${t.requires}`)
+                                                )
+                                            ),
+                                            e('div', { className: 'result-description' }, t.description),
+                                            e('div', { className: 'result-guide-text' }, '"' + t.guideText + '"'),
+                                            e('div', { className: 'result-mechanics', style: { marginTop: '8px' } }, 
+                                                'Interactividad: ' + t.interactivity + ' | Complejidad: ' + t.complexity
+                                            ),
+                                            e('span', { className: 'result-expansion' }, t.expansion)
+                                        )
+                                    )
+                                ) : e('div', { className: 'no-results' },
+                                    e('div', { className: 'no-results-icon' }, '🔍'),
+                                    e('div', null, 'No hay townsfolk disponibles')
+                                )
+                            ),
+                            
+                            // Rogues
+                            e('div', { className: 'results-section' },
+                                e('h2', { className: 'section-title' }, 
+                                    `🗡️ Rogue Cards Disponibles (${filteredRogues.length})`
+                                ),
+                                useMultipleRogues && e('div', { className: 'info-box', style: { marginBottom: '16px' } },
+                                    e('div', { className: 'info-box-text' }, 
+                                        '🗡️ Rogues marcados con ❌ NO son recomendados para Multiple Rogues y se excluyen del randomizer.'
+                                    )
+                                ),
+                                filteredRogues.length > 0 ? e('div', { className: 'results-grid' },
+                                    filteredRogues.map((r, i) => 
+                                        e('div', { 
+                                            key: i, 
+                                            className: 'result-card',
+                                            style: useMultipleRogues && r.notRecommendedMultiple ? { opacity: 0.6, border: '2px solid #ef4444' } : {}
+                                        },
+                                            e('div', { className: 'result-header' },
+                                                e('div', null,
+                                                    e('span', { className: 'result-number' }, '#' + r.id),
+                                                    e('span', { className: 'result-title' }, r.name),
+                                                    useMultipleRogues && r.notRecommendedMultiple && e('span', { className: 'badge badge-not-recommended' }, '❌ No para Multiple')
+                                                ),
+                                                e('div', { className: 'result-complexity' }, 
+                                                    '⭐'.repeat(
+                                                        r.difficulty === 'Beginner' ? 1 : 
+                                                        r.difficulty === 'Intermediate' ? 2 : 
+                                                        r.difficulty === 'Advanced' ? 3 : 4
+                                                    )
+                                                )
+                                            ),
+                                            e('div', { className: 'result-mechanics' }, r.difficulty + ' | Impacto: ' + r.impact),
+                                            e('div', { className: 'result-description' }, r.description),
+                                            e('div', { className: 'result-guide-text' }, '"' + r.guideText + '"'),
+                                            e('div', { className: 'result-mechanics', style: { marginTop: '8px' } }, 
+                                                'Interactividad: ' + r.interactivity
+                                            ),
+                                            e('span', { className: 'result-expansion' }, r.expansion)
+                                        )
+                                    )
+                                ) : e('div', { className: 'no-results' },
+                                    e('div', { className: 'no-results-icon' }, '🔍'),
+                                    e('div', null, 'No hay rogues disponibles')
+                                )
+                            )
+                        )
+                    )
+                );
+            }
+            
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(e(App));
+        });
+    </script>
+</body>
+</html>
