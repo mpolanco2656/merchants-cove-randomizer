@@ -39,5 +39,4 @@ export interface RandomSetup {
 }
 
 export type ComplexityLevel = 0 | 1 | 2 | 3 | 4;
-export type InteractivityLevel = 0 | 1 | 2 | 3 | 4;
 export type ViewMode = '' | 'random' | 'all';

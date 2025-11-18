@@ -1,9 +1,8 @@
-import { ComplexityLevel, InteractivityLevel } from '../types';
+import { ComplexityLevel } from '../types';
 
 interface FiltersProps {
   playerCount: number;
   complexity: ComplexityLevel;
-  interactivity: InteractivityLevel;
   hasFactionFestival: boolean;
   hasPaladins: boolean;
   useMultipleRogues: boolean;
@@ -12,7 +11,6 @@ interface FiltersProps {
   maxTownsfolk: number;
   onPlayerCountChange: (count: number) => void;
   onComplexityChange: (level: ComplexityLevel) => void;
-  onInteractivityChange: (level: InteractivityLevel) => void;
   onFactionFestivalChange: (value: boolean) => void;
   onPaladinsChange: (value: boolean) => void;
   onMultipleRoguesChange: (value: boolean) => void;
@@ -21,12 +19,10 @@ interface FiltersProps {
 }
 
 const complexityLabels = ['Muy Fácil', 'Fácil', 'Intermedio', 'Avanzado', 'Experto'];
-const interactivityLabels = ['Muy Baja', 'Baja', 'Media', 'Alta', 'Muy Alta'];
 
 export const Filters = ({
   playerCount,
   complexity,
-  interactivity,
   hasFactionFestival,
   hasPaladins,
   useMultipleRogues,
@@ -35,7 +31,6 @@ export const Filters = ({
   maxTownsfolk,
   onPlayerCountChange,
   onComplexityChange,
-  onInteractivityChange,
   onFactionFestivalChange,
   onPaladinsChange,
   onMultipleRoguesChange,
@@ -78,26 +73,6 @@ export const Filters = ({
           />
           <span className="min-w-[120px] text-right text-primary font-semibold text-sm">
             {complexityLabels[complexity]}
-          </span>
-        </div>
-      </div>
-
-      {/* Interactivity Slider */}
-      <div className="mb-5">
-        <label className="block font-semibold text-slate-800 mb-3 text-sm uppercase tracking-wide">
-          Interactividad Deseada
-        </label>
-        <div className="flex items-center gap-4">
-          <input
-            type="range"
-            min={0}
-            max={4}
-            value={interactivity}
-            onChange={(e) => onInteractivityChange(parseInt(e.target.value) as InteractivityLevel)}
-            className="flex-1 h-2 rounded bg-slate-200 appearance-none cursor-pointer slider"
-          />
-          <span className="min-w-[120px] text-right text-primary font-semibold text-sm">
-            {interactivityLabels[interactivity]}
           </span>
         </div>
       </div>

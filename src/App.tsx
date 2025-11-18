@@ -8,7 +8,6 @@ import { townsfolk } from './data/townsfolk';
 import { rogues } from './data/rogues';
 import {
   ComplexityLevel,
-  InteractivityLevel,
   ViewMode,
   RandomSetup,
   Merchant,
@@ -19,7 +18,6 @@ import {
 function App() {
   const [playerCount, setPlayerCount] = useState<number>(4);
   const [complexity, setComplexity] = useState<ComplexityLevel>(2);
-  const [interactivity, setInteractivity] = useState<InteractivityLevel>(2);
   const [hasFactionFestival, setHasFactionFestival] = useState<boolean>(false);
   const [hasPaladins, setHasPaladins] = useState<boolean>(false);
   const [useMultipleRogues, setUseMultipleRogues] = useState<boolean>(false);
@@ -118,7 +116,6 @@ function App() {
       <Filters
         playerCount={playerCount}
         complexity={complexity}
-        interactivity={interactivity}
         hasFactionFestival={hasFactionFestival}
         hasPaladins={hasPaladins}
         useMultipleRogues={useMultipleRogues}
@@ -127,7 +124,6 @@ function App() {
         maxTownsfolk={filteredTownsfolk.length}
         onPlayerCountChange={setPlayerCount}
         onComplexityChange={setComplexity}
-        onInteractivityChange={setInteractivity}
         onFactionFestivalChange={setHasFactionFestival}
         onPaladinsChange={setHasPaladins}
         onMultipleRoguesChange={setUseMultipleRogues}
