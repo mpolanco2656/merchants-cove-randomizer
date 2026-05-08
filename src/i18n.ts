@@ -3,7 +3,7 @@ export type Locale = 'es' | 'en';
 export const translations = {
   es: {
     languageLabel: 'Idioma',
-    languageName: 'Espanol',
+    languageName: 'Español',
     header: {
       kicker: '⚓ Final Frontier Games',
       divider: '⚜ Setup',
@@ -12,10 +12,10 @@ export const translations = {
     filters: {
       players: 'Jugadores',
       playerOptions: ['1 - Solo', '2 Jugadores', '3 Jugadores', '4 Jugadores', '5 Jugadores'],
-      complexity: 'Complejidad Maxima',
-      complexityHint: 'Muy Facil - Experto',
-      complexityLabels: ['Muy Facil', 'Facil', 'Intermedio', 'Avanzado', 'Experto'],
-      modules: 'Modulos / Expansiones',
+      complexity: 'Complejidad Máxima',
+      complexityHint: 'Muy Fácil - Experto',
+      complexityLabels: ['Muy Fácil', 'Fácil', 'Intermedio', 'Avanzado', 'Experto'],
+      modules: 'Módulos / Expansiones',
       variants: 'Variantes',
       factionFestival: '⚔ Faction Festival',
       paladins: '🛡 Paladins',
@@ -28,19 +28,19 @@ export const translations = {
     info: {
       recommendedTitle: 'Setup Recomendado',
       merchants: (count: number) =>
-        `Se seleccionaran ${count} segun la complejidad elegida.`,
+        `Se seleccionarán ${count} según la complejidad elegida.`,
       townsfolk:
         '2 sets por defecto; Locals + Mercenaries para la primera partida.',
       rogues: '1 carta por defecto; Multiple Rogues usa 3 cartas barajadas.',
       multipleRoguesTitle: '⚠ Variante Multiple Rogues Activada',
       multipleRoguesBody:
-        'Baraja 3 Rogue cards y colocalas en el area de Rogue. Durante Cleanup de cada ronda, retira la carta superior. Kraken, The Fence, Vigilantes y Revolutionaries se excluyen del randomizer.',
+        'Baraja 3 Rogue cards y colócalas en el área de Rogue. Durante Cleanup de cada ronda, retira la carta superior. Kraken, The Fence, Vigilantes y Revolutionaries se excluyen del randomizer.',
       townsfolkSetup: (count: number, showFirstGameTip: boolean) =>
         `Mezcla estos ${count} sets en un solo mazo.${
           showFirstGameTip ? ' Primera partida: Locals + Mercenaries recomendado.' : ''
         }`,
       noMulti:
-        'Rogues marcados con "No Multi" se excluyen del randomizer cuando Multiple Rogues esta activo.'
+        'Rogues marcados con "No Multi" se excluyen del randomizer cuando Multiple Rogues está activo.'
     },
     actions: {
       generate: '🎲 Generar Setup Aleatorio',
@@ -81,7 +81,7 @@ export const translations = {
       High: 'Alta',
       'Very High': 'Muy Alta',
       None: 'Ninguna',
-      Chaotic: 'Caotico'
+      Chaotic: 'Caótico'
     }
   },
   en: {
