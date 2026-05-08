@@ -1,45 +1,44 @@
 import { Townsfolk } from '../types';
+import { Locale, translateValue, translations } from '../i18n';
 
 interface TownsfolkCardProps {
+  locale: Locale;
   townsfolk: Townsfolk;
   isRandomSelection?: boolean;
 }
 
-export const TownsfolkCard = ({ townsfolk, isRandomSelection = false }: TownsfolkCardProps) => {
+export const TownsfolkCard = ({
+  locale,
+  townsfolk,
+  isRandomSelection = false
+}: TownsfolkCardProps) => {
+  const copy = translations[locale];
+  const description = locale === 'en' ? townsfolk.guideText : townsfolk.description;
+
   return (
-    <div
-      className={`bg-white border-2 rounded-xl p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${
-        isRandomSelection
-          ? 'bg-gradient-to-br from-slate-50 to-slate-100 border-primary border-[3px]'
-          : 'border-slate-200 hover:border-primary'
-      }`}
-    >
-      <div className="flex justify-between items-start mb-3">
-        <div className="flex-1">
-          <h3 className="text-lg font-bold text-slate-800 inline">{townsfolk.name}</h3>
-          {townsfolk.requires && (
-            <span className="inline-block ml-2 bg-amber-100 text-amber-900 px-3 py-1 rounded-xl text-[11px] font-semibold">
-              ⚠️ Requiere {townsfolk.requires}
-            </span>
-          )}
+    <div className={`card ${isRandomSelection ? 'selected' : ''}`}>
+      {isRandomSelection && <div className="selected-badge">&#10022;</div>}
+      <div className="card-head">
+        <div className="card-head-left">
+          <span className="card-name">{townsfolk.name}</span>
+          {townsfolk.requires && <span className="tag tag-requires">{townsfolk.requires}</span>}
         </div>
       </div>
 
-      <p className="text-slate-600 text-sm leading-relaxed mb-3">
-        {townsfolk.description}
-      </p>
-
-      <p className="text-slate-500 text-[13px] leading-snug italic mb-3 pl-3 border-l-[3px] border-slate-200">
-        "{townsfolk.guideText}"
-      </p>
-
-      <div className="text-primary text-[13px] font-semibold mb-3">
-        Interactividad: {townsfolk.interactivity} | Complejidad: {townsfolk.complexity}
+      <div className="card-meta">
+        <div className="meta-item">
+          {copy.cards.interactivity}: <span>{translateValue(locale, townsfolk.interactivity)}</span>
+        </div>
+        <div className="meta-item">
+          {copy.cards.complexity}: <span>{translateValue(locale, townsfolk.complexity)}</span>
+        </div>
       </div>
 
-      <span className="inline-block bg-slate-100 text-slate-600 px-3 py-1 rounded-xl text-xs font-semibold">
-        {townsfolk.expansion}
-      </span>
+      <p className="card-desc">{description}</p>
+
+      <div className="card-footer">
+        <span className="tag tag-expansion">{townsfolk.expansion}</span>
+      </div>
     </div>
   );
 };
