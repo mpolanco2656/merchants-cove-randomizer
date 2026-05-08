@@ -1,19 +1,16 @@
-version: '3.8'
-
 services:
   merchants-cove-randomizer:
     build:
       context: .
       dockerfile: Dockerfile
+    image: merchants-cove-randomizer:latest
     container_name: merchants-cove-randomizer
     ports:
-      - "8080:80"
+      - "127.0.0.1:8086:80"
     restart: unless-stopped
-    environment:
-      - NODE_ENV=production
-    networks:
-      - merchants-network
-
-networks:
-  merchants-network:
-    driver: bridge
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Filters } from './components/Filters';
 import { MerchantCard } from './components/MerchantCard';
 import { TownsfolkCard } from './components/TownsfolkCard';
@@ -6,16 +6,38 @@ import { RogueCard } from './components/RogueCard';
 import { merchants } from './data/merchants';
 import { townsfolk } from './data/townsfolk';
 import { rogues } from './data/rogues';
-import {
-  ComplexityLevel,
-  ViewMode,
-  RandomSetup,
-  Merchant,
-  Townsfolk,
-  Rogue
-} from './types';
+import { Locale, translations } from './i18n';
+import { ComplexityLevel, Merchant, RandomSetup, Rogue, Townsfolk, ViewMode } from './types';
+
+type ActiveTab = 'merchants' | 'townsfolk' | 'rogues';
+
+const difficultyMap: Record<string, number> = {
+  Beginner: 1,
+  Intermediate: 2,
+  Advanced: 3,
+  Expert: 4
+};
+
+const randomPick = <T,>(items: T[], count: number) => {
+  const pool = [...items];
+  const selected: T[] = [];
+
+  for (let index = 0; index < Math.min(count, pool.length); index++) {
+    const randomIndex = Math.floor(Math.random() * pool.length);
+    selected.push(pool[randomIndex]);
+    pool.splice(randomIndex, 1);
+  }
+
+  return selected;
+};
+
+const getInitialLocale = (): Locale => {
+  const storedLocale = window.localStorage.getItem('merchants-cove-locale');
+  return storedLocale === 'en' || storedLocale === 'es' ? storedLocale : 'en';
+};
 
 function App() {
+  const [locale, setLocale] = useState<Locale>(getInitialLocale);
   const [playerCount, setPlayerCount] = useState<number>(4);
   const [complexity, setComplexity] = useState<ComplexityLevel>(2);
   const [hasFactionFestival, setHasFactionFestival] = useState<boolean>(false);
@@ -25,75 +47,55 @@ function App() {
   const [townsfolkCount, setTownsfolkCount] = useState<number>(2);
   const [mode, setMode] = useState<ViewMode>('');
   const [randomSetup, setRandomSetup] = useState<RandomSetup | null>(null);
+  const [activeTab, setActiveTab] = useState<ActiveTab>('merchants');
+  const [spinAnim, setSpinAnim] = useState<boolean>(false);
+  const copy = translations[locale];
 
-  // Filter data based on settings
   const filteredMerchants = useMemo(() => {
-    return merchants.filter(m => m.complexity <= complexity + 1);
+    return merchants.filter((merchant) => merchant.complexity <= complexity + 1);
   }, [complexity]);
 
   const filteredTownsfolk = useMemo(() => {
-    return townsfolk.filter(t => {
-      if (t.requires === 'Faction Festival' && !hasFactionFestival) return false;
-      if (t.requires === 'Paladins' && !hasPaladins) return false;
+    return townsfolk.filter((item) => {
+      if (item.requires === 'Faction Festival' && !hasFactionFestival) return false;
+      if (item.requires === 'Paladins' && !hasPaladins) return false;
       return true;
     });
   }, [hasFactionFestival, hasPaladins]);
 
   const filteredRogues = useMemo(() => {
-    const difficultyMap: Record<string, number> = {
-      'Beginner': 1,
-      'Intermediate': 2,
-      'Advanced': 3,
-      'Expert': 4
-    };
-    return rogues.filter(r => difficultyMap[r.difficulty] <= complexity + 1);
+    return rogues.filter((rogue) => difficultyMap[rogue.difficulty] <= complexity + 1);
   }, [complexity]);
 
-  // Generate random setup
+  useEffect(() => {
+    setTownsfolkCount((current) => Math.max(2, Math.min(filteredTownsfolk.length, current)));
+  }, [filteredTownsfolk.length]);
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    window.localStorage.setItem('merchants-cove-locale', locale);
+  }, [locale]);
+
   const generateRandom = () => {
     if (filteredMerchants.length === 0) {
-      alert('No hay merchants disponibles con estos filtros');
+      alert(copy.alertNoMerchants);
       return;
     }
 
-    // Select Merchants
-    const selectedMerchants: Merchant[] = [];
-    const availableMerchants = [...filteredMerchants];
-    for (let i = 0; i < Math.min(playerCount, availableMerchants.length); i++) {
-      const randomIndex = Math.floor(Math.random() * availableMerchants.length);
-      selectedMerchants.push(availableMerchants[randomIndex]);
-      availableMerchants.splice(randomIndex, 1);
-    }
-
-    // Select Townsfolk
-    const selectedTownsfolk: Townsfolk[] = [];
-    const availableTownsfolk = [...filteredTownsfolk];
-    const numSets = useManyTownsfolk
-      ? Math.min(townsfolkCount, availableTownsfolk.length)
+    const selectedMerchants: Merchant[] = randomPick(filteredMerchants, playerCount);
+    const selectedTownsfolkCount = useManyTownsfolk
+      ? Math.min(townsfolkCount, filteredTownsfolk.length)
       : 2;
+    const selectedTownsfolk: Townsfolk[] = randomPick(filteredTownsfolk, selectedTownsfolkCount);
 
-    for (let i = 0; i < numSets; i++) {
-      if (availableTownsfolk.length === 0) break;
-      const randomIndex = Math.floor(Math.random() * availableTownsfolk.length);
-      selectedTownsfolk.push(availableTownsfolk[randomIndex]);
-      availableTownsfolk.splice(randomIndex, 1);
-    }
-
-    // Select Rogues
     let selectedRogues: Rogue[];
     if (useMultipleRogues) {
-      const availableRoguesForMultiple = filteredRogues.filter(r => !r.notRecommendedMultiple);
-      selectedRogues = [];
-      const tempRogues = [...availableRoguesForMultiple];
-
-      for (let i = 0; i < Math.min(3, tempRogues.length); i++) {
-        const randomIndex = Math.floor(Math.random() * tempRogues.length);
-        selectedRogues.push(tempRogues[randomIndex]);
-        tempRogues.splice(randomIndex, 1);
-      }
+      selectedRogues = randomPick(
+        filteredRogues.filter((rogue) => !rogue.notRecommendedMultiple),
+        3
+      );
     } else {
-      const randomRogue = filteredRogues[Math.floor(Math.random() * filteredRogues.length)];
-      selectedRogues = [randomRogue];
+      selectedRogues = randomPick(filteredRogues, 1);
     }
 
     setRandomSetup({
@@ -102,203 +104,282 @@ function App() {
       rogues: selectedRogues
     });
     setMode('random');
+    setActiveTab('merchants');
+    setSpinAnim(true);
+    window.setTimeout(() => setSpinAnim(false), 700);
+    window.setTimeout(() => {
+      document.getElementById('results-anchor')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
+  const toggleAllOptions = () => {
+    setMode((current) => (current === 'all' ? '' : 'all'));
+    setActiveTab('merchants');
+  };
+
+  const tabLabels: Record<ActiveTab, string> = {
+    merchants: `${copy.summary.merchantsTab} (${filteredMerchants.length})`,
+    townsfolk: `${copy.summary.townsfolkTab} (${filteredTownsfolk.length})`,
+    rogues: `${copy.summary.roguesTab} (${filteredRogues.length})`
+  };
+
+  const tabs = Object.keys(tabLabels) as ActiveTab[];
+
   return (
-    <div className="max-w-7xl mx-auto bg-white rounded-2xl p-8 shadow-2xl">
-      <h1 className="text-center text-slate-700 mb-2 text-[32px] font-bold">
-        ⚓ Merchants Cove Setup Selector
-      </h1>
-      <div className="text-center text-slate-500 mb-8 text-base">
-        Herramienta interactiva para seleccionar la configuración perfecta de tu partida
-      </div>
-
-      <Filters
-        playerCount={playerCount}
-        complexity={complexity}
-        hasFactionFestival={hasFactionFestival}
-        hasPaladins={hasPaladins}
-        useMultipleRogues={useMultipleRogues}
-        useManyTownsfolk={useManyTownsfolk}
-        townsfolkCount={townsfolkCount}
-        maxTownsfolk={filteredTownsfolk.length}
-        onPlayerCountChange={setPlayerCount}
-        onComplexityChange={setComplexity}
-        onFactionFestivalChange={setHasFactionFestival}
-        onPaladinsChange={setHasPaladins}
-        onMultipleRoguesChange={setUseMultipleRogues}
-        onManyTownsfolkChange={setUseManyTownsfolk}
-        onTownsfolkCountChange={setTownsfolkCount}
-      />
-
-      {/* Info Box */}
-      <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg mb-6">
-        <div className="font-bold text-blue-900 mb-2">📋 Setup Recomendado</div>
-        <ul className="text-blue-900 text-sm leading-relaxed ml-5 list-disc">
-          <li>
-            <strong>Merchants:</strong> El randomizer seleccionará {playerCount} merchants según
-            complejidad
-          </li>
-          <li>
-            <strong>Townsfolk:</strong> 2 sets por defecto (Locals + Mercenaries recomendados para
-            primera partida)
-          </li>
-          <li>
-            <strong>Rogues:</strong> 1 carta por defecto (variante Multiple Rogues: 3 cartas
-            barajadas)
-          </li>
-          <li>
-            <strong>Duración:</strong> Faction Festival hace partidas más lentas y amigables. Para
-            días más largos usa variante "Longer Days"
-          </li>
-        </ul>
-      </div>
-
-      {/* Warning for Multiple Rogues */}
-      {useMultipleRogues && (
-        <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-lg mb-6">
-          <div className="font-bold text-amber-900 mb-2">
-            ⚠️ Variante Multiple Rogues Activada
+    <div className="page-bg">
+      <div className="app-container">
+        <header className="header">
+          <div className="language-switch" aria-label={copy.languageLabel}>
+            <button
+              type="button"
+              className={locale === 'es' ? 'active' : ''}
+              onClick={() => setLocale('es')}
+            >
+              ES
+            </button>
+            <button
+              type="button"
+              className={locale === 'en' ? 'active' : ''}
+              onClick={() => setLocale('en')}
+            >
+              EN
+            </button>
           </div>
-          <div className="text-amber-900 text-sm leading-relaxed">
-            Baraja 3 Rogue cards y colócalas en el área de Rogue. Durante Cleanup de cada ronda,
-            retira la carta superior. NO recomendados: Kraken, The Fence, Vigilantes,
-            Revolutionaries (se excluyen automáticamente del randomizer).
-          </div>
+          <span className="header-anchor">{copy.header.kicker}</span>
+          <h1>Merchants Cove</h1>
+          <div className="header-divider">{copy.header.divider}</div>
+          <p className="header-sub">{copy.header.subtitle}</p>
+        </header>
+
+        <Filters
+          locale={locale}
+          playerCount={playerCount}
+          complexity={complexity}
+          hasFactionFestival={hasFactionFestival}
+          hasPaladins={hasPaladins}
+          useMultipleRogues={useMultipleRogues}
+          useManyTownsfolk={useManyTownsfolk}
+          townsfolkCount={townsfolkCount}
+          maxTownsfolk={filteredTownsfolk.length}
+          onPlayerCountChange={setPlayerCount}
+          onComplexityChange={setComplexity}
+          onFactionFestivalChange={setHasFactionFestival}
+          onPaladinsChange={setHasPaladins}
+          onMultipleRoguesChange={setUseMultipleRogues}
+          onManyTownsfolkChange={setUseManyTownsfolk}
+          onTownsfolkCountChange={setTownsfolkCount}
+        />
+
+        <div className="info-box blue">
+          <div className="info-box-title">{copy.info.recommendedTitle}</div>
+          <ul>
+            <li>
+              <strong>{copy.summary.merchants}:</strong> {copy.info.merchants(playerCount)}
+            </li>
+            <li>
+              <strong>Townsfolk:</strong> {copy.info.townsfolk}
+            </li>
+            <li>
+              <strong>{copy.summary.rogues}:</strong> {copy.info.rogues}
+            </li>
+          </ul>
         </div>
-      )}
 
-      {/* Buttons */}
-      <div className="flex gap-4 mb-8 flex-wrap">
-        <button
-          onClick={generateRandom}
-          className="flex-1 min-w-[200px] p-4 px-8 border-none rounded-lg text-base font-semibold cursor-pointer transition-all duration-200 uppercase tracking-wide bg-gradient-to-br from-primary to-primary-dark text-white shadow-lg hover:-translate-y-0.5 hover:shadow-xl"
-        >
-          🎲 Generar Setup Aleatorio
-        </button>
-        <button
-          onClick={() => setMode('all')}
-          className="flex-1 min-w-[200px] p-4 px-8 border-2 border-primary rounded-lg text-base font-semibold cursor-pointer transition-all duration-200 uppercase tracking-wide bg-white text-primary hover:bg-primary hover:text-white"
-        >
-          📋 Ver Todas las Opciones
-        </button>
-      </div>
-
-      {/* Results */}
-      {mode === 'random' && randomSetup && (
-        <div className="mt-8">
-          {/* Merchants */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-4 pb-2 border-b-[3px] border-primary">
-              ⚒️ Merchants Seleccionados ({randomSetup.merchants.length})
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {randomSetup.merchants.map((m, i) => (
-                <MerchantCard key={i} merchant={m} isRandomSelection />
-              ))}
-            </div>
+        {useMultipleRogues && (
+          <div className="info-box amber">
+            <div className="info-box-title">{copy.info.multipleRoguesTitle}</div>
+            {copy.info.multipleRoguesBody}
           </div>
+        )}
 
-          {/* Townsfolk */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-4 pb-2 border-b-[3px] border-primary">
-              👥 Townsfolk Sets ({randomSetup.townsfolk.length})
-            </h2>
-            <div className="mb-4 p-3 bg-slate-50 rounded-lg text-sm">
-              📋 Setup: Mezcla estos {randomSetup.townsfolk.length} sets juntos en un solo mazo.{' '}
-              {!useManyTownsfolk && 'Primera partida: Locals + Mercenaries recomendado.'}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {randomSetup.townsfolk.map((t, i) => (
-                <TownsfolkCard key={i} townsfolk={t} isRandomSelection />
-              ))}
-            </div>
-          </div>
-
-          {/* Rogues */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-4 pb-2 border-b-[3px] border-primary">
-              {useMultipleRogues
-                ? `🗡️ Rogue Cards - Multiple Rogues (${randomSetup.rogues.length} cartas barajadas)`
-                : '🗡️ Rogue Card'}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {randomSetup.rogues.map((r, i) => (
-                <RogueCard key={i} rogue={r} isRandomSelection />
-              ))}
-            </div>
-          </div>
+        <div className="action-row">
+          <button
+            type="button"
+            onClick={generateRandom}
+            className={`btn btn-primary ${spinAnim ? 'spin' : ''}`}
+          >
+            {copy.actions.generate}
+          </button>
+          <button
+            type="button"
+            onClick={toggleAllOptions}
+            className={`btn btn-secondary ${mode === 'all' ? 'active' : ''}`}
+          >
+            {mode === 'all' ? copy.actions.hideAll : copy.actions.showAll}
+          </button>
         </div>
-      )}
 
-      {mode === 'all' && (
-        <div className="mt-8">
-          {/* All Merchants */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-4 pb-2 border-b-[3px] border-primary">
-              ⚒️ Merchants Disponibles ({filteredMerchants.length})
-            </h2>
-            {filteredMerchants.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {filteredMerchants.map((m, i) => (
-                  <MerchantCard key={i} merchant={m} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center p-12 text-slate-500">
-                <div className="text-6xl mb-4">🔍</div>
-                <div>No hay merchants disponibles con estos criterios</div>
-              </div>
-            )}
-          </div>
+        <div id="results-anchor" />
 
-          {/* All Townsfolk */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-4 pb-2 border-b-[3px] border-primary">
-              👥 Townsfolk Sets Disponibles ({filteredTownsfolk.length})
-            </h2>
-            {filteredTownsfolk.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {filteredTownsfolk.map((t, i) => (
-                  <TownsfolkCard key={i} townsfolk={t} />
-                ))}
+        {mode === 'random' && randomSetup && (
+          <div className="results fade-in">
+            <div className="setup-summary fade-in fade-in-1">
+              <div>
+                <div className="setup-label">{copy.summary.merchants}</div>
+                <div className="setup-val">{randomSetup.merchants.length}</div>
               </div>
-            ) : (
-              <div className="text-center p-12 text-slate-500">
-                <div className="text-6xl mb-4">🔍</div>
-                <div>No hay townsfolk disponibles</div>
+              <div className="setup-divider" />
+              <div>
+                <div className="setup-label">{copy.summary.townsfolk}</div>
+                <div className="setup-val">{randomSetup.townsfolk.length}</div>
               </div>
-            )}
-          </div>
+              <div className="setup-divider" />
+              <div>
+                <div className="setup-label">
+                  {randomSetup.rogues.length > 1 ? copy.summary.rogues : copy.summary.rogue}
+                </div>
+                <div className="setup-val">{randomSetup.rogues.length}</div>
+              </div>
+              <div className="setup-divider" />
+              <div>
+                <div className="setup-label">{copy.summary.players}</div>
+                <div className="setup-val">{playerCount}</div>
+              </div>
+            </div>
 
-          {/* All Rogues */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-4 pb-2 border-b-[3px] border-primary">
-              🗡️ Rogue Cards Disponibles ({filteredRogues.length})
-            </h2>
-            {useMultipleRogues && (
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg mb-4">
-                <div className="text-blue-900 text-sm">
-                  🗡️ Rogues marcados con ❌ NO son recomendados para Multiple Rogues y se excluyen
-                  del randomizer.
+            <div className="tab-bar">
+              <button
+                type="button"
+                className={`tab ${activeTab === 'merchants' ? 'active' : ''}`}
+                onClick={() => setActiveTab('merchants')}
+              >
+                {copy.summary.merchantsTab} ({randomSetup.merchants.length})
+              </button>
+              <button
+                type="button"
+                className={`tab ${activeTab === 'townsfolk' ? 'active' : ''}`}
+                onClick={() => setActiveTab('townsfolk')}
+              >
+                {copy.summary.townsfolkTab} ({randomSetup.townsfolk.length})
+              </button>
+              <button
+                type="button"
+                className={`tab ${activeTab === 'rogues' ? 'active' : ''}`}
+                onClick={() => setActiveTab('rogues')}
+              >
+                {copy.summary.roguesTab} ({randomSetup.rogues.length})
+              </button>
+            </div>
+
+            {activeTab === 'merchants' && (
+              <div className="section-block fade-in">
+                <div className="cards-grid">
+                  {randomSetup.merchants.map((merchant) => (
+                    <MerchantCard
+                      key={merchant.id}
+                      locale={locale}
+                      merchant={merchant}
+                      isRandomSelection
+                    />
+                  ))}
                 </div>
               </div>
             )}
-            {filteredRogues.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {filteredRogues.map((r, i) => (
-                  <RogueCard key={i} rogue={r} useMultipleRogues={useMultipleRogues} />
-                ))}
+
+            {activeTab === 'townsfolk' && (
+              <div className="section-block fade-in">
+                <div className="info-box blue">
+                  {copy.info.townsfolkSetup(randomSetup.townsfolk.length, !useManyTownsfolk)}
+                </div>
+                <div className="cards-grid">
+                  {randomSetup.townsfolk.map((item) => (
+                    <TownsfolkCard
+                      key={item.name}
+                      locale={locale}
+                      townsfolk={item}
+                      isRandomSelection
+                    />
+                  ))}
+                </div>
               </div>
-            ) : (
-              <div className="text-center p-12 text-slate-500">
-                <div className="text-6xl mb-4">🔍</div>
-                <div>No hay rogues disponibles</div>
+            )}
+
+            {activeTab === 'rogues' && (
+              <div className="section-block fade-in">
+                <div className="cards-grid">
+                  {randomSetup.rogues.map((rogue) => (
+                    <RogueCard key={rogue.id} locale={locale} rogue={rogue} isRandomSelection />
+                  ))}
+                </div>
               </div>
             )}
           </div>
-        </div>
-      )}
+        )}
+
+        {mode === 'all' && (
+          <div className="results fade-in">
+            <div className="tab-bar">
+              {tabs.map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  className={`tab ${activeTab === tab ? 'active' : ''}`}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tabLabels[tab]}
+                </button>
+              ))}
+            </div>
+
+            {activeTab === 'merchants' && (
+              <div className="section-block fade-in">
+                {filteredMerchants.length > 0 ? (
+                  <div className="cards-grid">
+                    {filteredMerchants.map((merchant) => (
+                      <MerchantCard key={merchant.id} locale={locale} merchant={merchant} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty">
+                    <div className="empty-icon">?</div>
+                    <div className="empty-text">{copy.empty.merchants}</div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'townsfolk' && (
+              <div className="section-block fade-in">
+                {filteredTownsfolk.length > 0 ? (
+                  <div className="cards-grid">
+                    {filteredTownsfolk.map((item) => (
+                      <TownsfolkCard key={item.name} locale={locale} townsfolk={item} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty">
+                    <div className="empty-icon">?</div>
+                    <div className="empty-text">{copy.empty.townsfolk}</div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'rogues' && (
+              <div className="section-block fade-in">
+                {useMultipleRogues && <div className="info-box blue">{copy.info.noMulti}</div>}
+                {filteredRogues.length > 0 ? (
+                  <div className="cards-grid">
+                    {filteredRogues.map((rogue) => (
+                      <RogueCard
+                        key={rogue.id}
+                        locale={locale}
+                        rogue={rogue}
+                        useMultipleRogues={useMultipleRogues}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty">
+                    <div className="empty-icon">?</div>
+                    <div className="empty-text">{copy.empty.rogues}</div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { ComplexityLevel } from '../types';
+import { Locale, translations } from '../i18n';
 
 interface FiltersProps {
+  locale: Locale;
   playerCount: number;
   complexity: ComplexityLevel;
   hasFactionFestival: boolean;
@@ -18,9 +20,22 @@ interface FiltersProps {
   onTownsfolkCountChange: (count: number) => void;
 }
 
-const complexityLabels = ['Muy Fácil', 'Fácil', 'Intermedio', 'Avanzado', 'Experto'];
+interface ChipProps {
+  label: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}
+
+const Chip = ({ label, checked, onChange }: ChipProps) => (
+  <label className={`chip ${checked ? 'active' : ''}`}>
+    <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} />
+    <span className="chip-dot" />
+    {label}
+  </label>
+);
 
 export const Filters = ({
+  locale,
   playerCount,
   complexity,
   hasFactionFestival,
@@ -37,126 +52,105 @@ export const Filters = ({
   onManyTownsfolkChange,
   onTownsfolkCountChange
 }: FiltersProps) => {
+  const sliderProgress = complexity * 25;
+  const copy = translations[locale];
+
   return (
-    <div className="bg-slate-50 p-6 rounded-xl mb-6">
-      {/* Player Count */}
-      <div className="mb-5">
-        <label className="block font-semibold text-slate-800 mb-3 text-sm uppercase tracking-wide">
-          Número de Jugadores
-        </label>
-        <select
-          value={playerCount}
-          onChange={(e) => onPlayerCountChange(parseInt(e.target.value))}
-          className="w-full max-w-[200px] p-2.5 border-2 border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-primary"
-        >
-          <option value={1}>1 Jugador (Solo)</option>
-          <option value={2}>2 Jugadores</option>
-          <option value={3}>3 Jugadores</option>
-          <option value={4}>4 Jugadores</option>
-          <option value={5}>5 Jugadores</option>
-        </select>
-      </div>
-
-      {/* Complexity Slider */}
-      <div className="mb-5">
-        <label className="block font-semibold text-slate-800 mb-3 text-sm uppercase tracking-wide">
-          Complejidad Máxima
-        </label>
-        <div className="flex items-center gap-4">
-          <input
-            type="range"
-            min={0}
-            max={4}
-            value={complexity}
-            onChange={(e) => onComplexityChange(parseInt(e.target.value) as ComplexityLevel)}
-            className="flex-1 h-2 rounded bg-slate-200 appearance-none cursor-pointer slider"
-          />
-          <span className="min-w-[120px] text-right text-primary font-semibold text-sm">
-            {complexityLabels[complexity]}
-          </span>
+    <section className="filters-panel">
+      <div className="filters-grid">
+        <div className="filter-group">
+          <span className="filter-label">{copy.filters.players}</span>
+          <select
+            value={playerCount}
+            onChange={(event) => onPlayerCountChange(parseInt(event.target.value))}
+            className="select-control"
+          >
+            {copy.filters.playerOptions.map((label, index) => (
+              <option key={index + 1} value={index + 1}>
+                {label}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>
 
-      {/* Module Checkboxes */}
-      <div className="mb-5">
-        <label className="block font-semibold text-slate-800 mb-3 text-sm uppercase tracking-wide">
-          Módulos / Expansiones Disponibles
-        </label>
-        <div className="flex flex-wrap gap-4">
-          <label className="flex items-center gap-2 p-2 px-4 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-primary hover:bg-slate-50 transition-all">
+        <div className="filter-group">
+          <span className="filter-label">{copy.filters.complexity}</span>
+          <div className="slider-wrap">
+            <div className="slider-top">
+              <span className="slider-hint">{copy.filters.complexityHint}</span>
+              <span className="slider-val">{copy.filters.complexityLabels[complexity]}</span>
+            </div>
             <input
-              type="checkbox"
-              checked={hasFactionFestival}
-              onChange={(e) => onFactionFestivalChange(e.target.checked)}
-              className="w-[18px] h-[18px] cursor-pointer"
-            />
-            <span className="text-sm text-slate-800 select-none">⚔️ Faction Festival</span>
-          </label>
-          <label className="flex items-center gap-2 p-2 px-4 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-primary hover:bg-slate-50 transition-all">
-            <input
-              type="checkbox"
-              checked={hasPaladins}
-              onChange={(e) => onPaladinsChange(e.target.checked)}
-              className="w-[18px] h-[18px] cursor-pointer"
-            />
-            <span className="text-sm text-slate-800 select-none">🛡️ Paladins</span>
-          </label>
-        </div>
-      </div>
-
-      {/* Townsfolk Options */}
-      <div className="mb-5">
-        <label className="block font-semibold text-slate-800 mb-3 text-sm uppercase tracking-wide">
-          Configuración de Townsfolk
-        </label>
-        <div className="flex flex-wrap gap-4">
-          <label className="flex items-center gap-2 p-2 px-4 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-primary hover:bg-slate-50 transition-all">
-            <input
-              type="checkbox"
-              checked={useManyTownsfolk}
-              onChange={(e) => onManyTownsfolkChange(e.target.checked)}
-              className="w-[18px] h-[18px] cursor-pointer"
-            />
-            <span className="text-sm text-slate-800 select-none">👥 Many Townsfolk (más de 2 sets)</span>
-          </label>
-        </div>
-        {useManyTownsfolk && (
-          <div className="mt-3">
-            <label className="block text-[13px] text-slate-600 mb-2">
-              Cantidad de Sets de Townsfolk:
-            </label>
-            <input
-              type="number"
-              min={2}
-              max={maxTownsfolk}
-              value={townsfolkCount}
-              onChange={(e) => {
-                const val = parseInt(e.target.value) || 2;
-                onTownsfolkCountChange(Math.max(2, Math.min(maxTownsfolk, val)));
+              type="range"
+              min={0}
+              max={4}
+              value={complexity}
+              onChange={(event) =>
+                onComplexityChange(parseInt(event.target.value) as ComplexityLevel)
+              }
+              className="range-control"
+              style={{
+                background: `linear-gradient(90deg, var(--gold) ${sliderProgress}%, var(--border) ${sliderProgress}%)`
               }}
-              className="w-full max-w-[100px] p-2.5 border-2 border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-primary"
             />
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* Multiple Rogues */}
-      <div className="mb-0">
-        <label className="block font-semibold text-slate-800 mb-3 text-sm uppercase tracking-wide">
-          Variantes de Rogues
-        </label>
-        <div className="flex flex-wrap gap-4">
-          <label className="flex items-center gap-2 p-2 px-4 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-primary hover:bg-slate-50 transition-all">
-            <input
-              type="checkbox"
-              checked={useMultipleRogues}
-              onChange={(e) => onMultipleRoguesChange(e.target.checked)}
-              className="w-[18px] h-[18px] cursor-pointer"
+        <div className="filter-group">
+          <span className="filter-label">{copy.filters.modules}</span>
+          <div className="chip-group">
+            <Chip
+              label={copy.filters.factionFestival}
+              checked={hasFactionFestival}
+              onChange={onFactionFestivalChange}
             />
-            <span className="text-sm text-slate-800 select-none">🗡️ Multiple Rogues (3 cartas)</span>
-          </label>
+            <Chip label={copy.filters.paladins} checked={hasPaladins} onChange={onPaladinsChange} />
+          </div>
+        </div>
+
+        <div className="filter-group">
+          <span className="filter-label">{copy.filters.variants}</span>
+          <div className="chip-group">
+            <Chip
+              label={copy.filters.multipleRogues}
+              checked={useMultipleRogues}
+              onChange={onMultipleRoguesChange}
+            />
+            <Chip
+              label={copy.filters.manyTownsfolk}
+              checked={useManyTownsfolk}
+              onChange={onManyTownsfolkChange}
+            />
+          </div>
+
+          {useManyTownsfolk && (
+            <div className="inline-count-control">
+              <span className="inline-count-label">{copy.filters.sets}</span>
+              <div className="num-input-wrap">
+                <button
+                  type="button"
+                  className="num-btn"
+                  onClick={() => onTownsfolkCountChange(Math.max(2, townsfolkCount - 1))}
+                  aria-label={copy.filters.decreaseTownsfolk}
+                >
+                  -
+                </button>
+                <span className="num-val">{townsfolkCount}</span>
+                <button
+                  type="button"
+                  className="num-btn"
+                  onClick={() =>
+                    onTownsfolkCountChange(Math.min(maxTownsfolk, townsfolkCount + 1))
+                  }
+                  aria-label={copy.filters.increaseTownsfolk}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
