@@ -127,6 +127,7 @@ function App() {
   };
 
   const tabs = Object.keys(tabLabels) as ActiveTab[];
+  const selectedMerchantCount = Math.min(playerCount, filteredMerchants.length);
 
   return (
     <div className="page-bg">
@@ -180,7 +181,7 @@ function App() {
           <ul>
             <li>
               <strong>{copy.summary.merchants}:</strong>{' '}
-              {copy.info.merchants(playerCount, useComplexityFilter)}
+              {copy.info.merchants(selectedMerchantCount, useComplexityFilter)}
             </li>
             <li>
               <strong>Townsfolk:</strong> {copy.info.townsfolk}

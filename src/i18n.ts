@@ -16,7 +16,8 @@ export const translations = {
       complexityHint: 'Muy Fácil - Experto',
       complexityLabels: ['Muy Fácil', 'Fácil', 'Intermedio', 'Avanzado', 'Experto'],
       useComplexityFilter: 'Usar filtro de complejidad',
-      fullRandom: 'Random total activo: merchants y rogues usan todo el pool disponible.',
+      fullRandom:
+        'Random total activo: se ignora la complejidad; otras reglas de variante aún pueden limitar el pool.',
       modules: 'Módulos / Expansiones',
       variants: 'Variantes',
       factionFestival: '⚔ Faction Festival',
@@ -103,7 +104,8 @@ export const translations = {
       complexityHint: 'Very Easy - Expert',
       complexityLabels: ['Very Easy', 'Easy', 'Intermediate', 'Advanced', 'Expert'],
       useComplexityFilter: 'Use Complexity Filter',
-      fullRandom: 'Full random is active: merchants and rogues use the whole available pool.',
+      fullRandom:
+        'Full random is active: complexity is ignored; other variant rules may still limit the pool.',
       modules: 'Modules / Expansions',
       variants: 'Variants',
       factionFestival: '⚔ Faction Festival',
