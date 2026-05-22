@@ -15,6 +15,8 @@ export const translations = {
       complexity: 'Complejidad Máxima',
       complexityHint: 'Muy Fácil - Experto',
       complexityLabels: ['Muy Fácil', 'Fácil', 'Intermedio', 'Avanzado', 'Experto'],
+      useComplexityFilter: 'Usar filtro de complejidad',
+      fullRandom: 'Random total activo: merchants y rogues usan todo el pool disponible.',
       modules: 'Módulos / Expansiones',
       variants: 'Variantes',
       factionFestival: '⚔ Faction Festival',
@@ -27,8 +29,10 @@ export const translations = {
     },
     info: {
       recommendedTitle: 'Setup Recomendado',
-      merchants: (count: number) =>
-        `Se seleccionarán ${count} según la complejidad elegida.`,
+      merchants: (count: number, useComplexityFilter: boolean) =>
+        useComplexityFilter
+          ? `Se seleccionarán ${count} según la complejidad elegida.`
+          : `Se seleccionarán ${count} del pool completo.`,
       townsfolk:
         '2 sets por defecto; Locals + Mercenaries para la primera partida.',
       rogues: '1 carta por defecto; Multiple Rogues usa 3 cartas barajadas.',
@@ -98,6 +102,8 @@ export const translations = {
       complexity: 'Max Complexity',
       complexityHint: 'Very Easy - Expert',
       complexityLabels: ['Very Easy', 'Easy', 'Intermediate', 'Advanced', 'Expert'],
+      useComplexityFilter: 'Use Complexity Filter',
+      fullRandom: 'Full random is active: merchants and rogues use the whole available pool.',
       modules: 'Modules / Expansions',
       variants: 'Variants',
       factionFestival: '⚔ Faction Festival',
@@ -110,8 +116,10 @@ export const translations = {
     },
     info: {
       recommendedTitle: 'Recommended Setup',
-      merchants: (count: number) =>
-        `${count} merchants will be selected based on the chosen complexity.`,
+      merchants: (count: number, useComplexityFilter: boolean) =>
+        useComplexityFilter
+          ? `${count} merchants will be selected based on the chosen complexity.`
+          : `${count} merchants will be selected from the full pool.`,
       townsfolk: '2 sets by default; Locals + Mercenaries for a first game.',
       rogues: '1 card by default; Multiple Rogues uses 3 shuffled cards.',
       multipleRoguesTitle: '⚠ Multiple Rogues Variant Enabled',
