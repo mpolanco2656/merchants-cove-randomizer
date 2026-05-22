@@ -40,6 +40,7 @@ function App() {
   const [locale, setLocale] = useState<Locale>(getInitialLocale);
   const [playerCount, setPlayerCount] = useState<number>(4);
   const [complexity, setComplexity] = useState<ComplexityLevel>(2);
+  const [useComplexityFilter, setUseComplexityFilter] = useState<boolean>(false);
   const [hasFactionFestival, setHasFactionFestival] = useState<boolean>(false);
   const [hasPaladins, setHasPaladins] = useState<boolean>(false);
   const [useMultipleRogues, setUseMultipleRogues] = useState<boolean>(false);
@@ -52,8 +53,9 @@ function App() {
   const copy = translations[locale];
 
   const filteredMerchants = useMemo(() => {
+    if (!useComplexityFilter) return merchants;
     return merchants.filter((merchant) => merchant.complexity <= complexity + 1);
-  }, [complexity]);
+  }, [complexity, useComplexityFilter]);
 
   const filteredTownsfolk = useMemo(() => {
     return townsfolk.filter((item) => {
@@ -64,8 +66,9 @@ function App() {
   }, [hasFactionFestival, hasPaladins]);
 
   const filteredRogues = useMemo(() => {
+    if (!useComplexityFilter) return rogues;
     return rogues.filter((rogue) => difficultyMap[rogue.difficulty] <= complexity + 1);
-  }, [complexity]);
+  }, [complexity, useComplexityFilter]);
 
   useEffect(() => {
     setTownsfolkCount((current) => Math.max(2, Math.min(filteredTownsfolk.length, current)));
@@ -124,6 +127,7 @@ function App() {
   };
 
   const tabs = Object.keys(tabLabels) as ActiveTab[];
+  const selectedMerchantCount = Math.min(playerCount, filteredMerchants.length);
 
   return (
     <div className="page-bg">
@@ -155,6 +159,7 @@ function App() {
           locale={locale}
           playerCount={playerCount}
           complexity={complexity}
+          useComplexityFilter={useComplexityFilter}
           hasFactionFestival={hasFactionFestival}
           hasPaladins={hasPaladins}
           useMultipleRogues={useMultipleRogues}
@@ -163,6 +168,7 @@ function App() {
           maxTownsfolk={filteredTownsfolk.length}
           onPlayerCountChange={setPlayerCount}
           onComplexityChange={setComplexity}
+          onComplexityFilterChange={setUseComplexityFilter}
           onFactionFestivalChange={setHasFactionFestival}
           onPaladinsChange={setHasPaladins}
           onMultipleRoguesChange={setUseMultipleRogues}
@@ -174,7 +180,8 @@ function App() {
           <div className="info-box-title">{copy.info.recommendedTitle}</div>
           <ul>
             <li>
-              <strong>{copy.summary.merchants}:</strong> {copy.info.merchants(playerCount)}
+              <strong>{copy.summary.merchants}:</strong>{' '}
+              {copy.info.merchants(selectedMerchantCount, useComplexityFilter)}
             </li>
             <li>
               <strong>Townsfolk:</strong> {copy.info.townsfolk}

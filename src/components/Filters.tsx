@@ -5,6 +5,7 @@ interface FiltersProps {
   locale: Locale;
   playerCount: number;
   complexity: ComplexityLevel;
+  useComplexityFilter: boolean;
   hasFactionFestival: boolean;
   hasPaladins: boolean;
   useMultipleRogues: boolean;
@@ -13,6 +14,7 @@ interface FiltersProps {
   maxTownsfolk: number;
   onPlayerCountChange: (count: number) => void;
   onComplexityChange: (level: ComplexityLevel) => void;
+  onComplexityFilterChange: (value: boolean) => void;
   onFactionFestivalChange: (value: boolean) => void;
   onPaladinsChange: (value: boolean) => void;
   onMultipleRoguesChange: (value: boolean) => void;
@@ -38,6 +40,7 @@ export const Filters = ({
   locale,
   playerCount,
   complexity,
+  useComplexityFilter,
   hasFactionFestival,
   hasPaladins,
   useMultipleRogues,
@@ -46,6 +49,7 @@ export const Filters = ({
   maxTownsfolk,
   onPlayerCountChange,
   onComplexityChange,
+  onComplexityFilterChange,
   onFactionFestivalChange,
   onPaladinsChange,
   onMultipleRoguesChange,
@@ -75,25 +79,36 @@ export const Filters = ({
 
         <div className="filter-group">
           <span className="filter-label">{copy.filters.complexity}</span>
-          <div className="slider-wrap">
-            <div className="slider-top">
-              <span className="slider-hint">{copy.filters.complexityHint}</span>
-              <span className="slider-val">{copy.filters.complexityLabels[complexity]}</span>
-            </div>
-            <input
-              type="range"
-              min={0}
-              max={4}
-              value={complexity}
-              onChange={(event) =>
-                onComplexityChange(parseInt(event.target.value) as ComplexityLevel)
-              }
-              className="range-control"
-              style={{
-                background: `linear-gradient(90deg, var(--gold) ${sliderProgress}%, var(--border) ${sliderProgress}%)`
-              }}
+          <div className="chip-group">
+            <Chip
+              label={copy.filters.useComplexityFilter}
+              checked={useComplexityFilter}
+              onChange={onComplexityFilterChange}
             />
           </div>
+          {useComplexityFilter ? (
+            <div className="slider-wrap">
+              <div className="slider-top">
+                <span className="slider-hint">{copy.filters.complexityHint}</span>
+                <span className="slider-val">{copy.filters.complexityLabels[complexity]}</span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={4}
+                value={complexity}
+                onChange={(event) =>
+                  onComplexityChange(parseInt(event.target.value) as ComplexityLevel)
+                }
+                className="range-control"
+                style={{
+                  background: `linear-gradient(90deg, var(--gold) ${sliderProgress}%, var(--border) ${sliderProgress}%)`
+                }}
+              />
+            </div>
+          ) : (
+            <div className="filter-note">{copy.filters.fullRandom}</div>
+          )}
         </div>
 
         <div className="filter-group">
